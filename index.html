@@ -114,13 +114,11 @@
 <div class="cards" id="cards"></div>
 
 <script>
-var BIN_ID='69c033beaa77b81da90b29b3';
-var API_KEY='$2a$10$pU0XiBXkpJvaeKiw4l3pGuw.QGRAX2dEWRMPHkTKiR/JvBmyxtHKu';
-var BIN_URL='https://api.jsonbin.io/v3/b/'+BIN_ID;
+var DB_URL='https://uni-tracker-f035f-default-rtdb.asia-southeast1.firebasedatabase.app/tasks.json';
 
 var subjects=['CAD','Vibrations','Materials','Heat'];
 var pillCls={lec:'p-lec',tut:'p-tut',lab:'p-lab',wksh:'p-wksh',asgn:'p-asgn',exam:'p-exam'};
-var editMode=false,pillMap={},cardPills={},idCounter=0,saveTimer=null,saving=false;
+var editMode=false,pillMap={},cardPills={},idCounter=0,saveTimer=null,saveDebounce=null;
 var chevSvg='<svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg>';
 
 var SEMESTER_START=new Date(2026,1,16,0,0,0,0);
@@ -190,43 +188,38 @@ function applyState(s){
   Object.keys(pillMap).forEach(function(id){
     var k=pillMap[id].key;
     if(k&&s[k]!==undefined){
-      pillMap[id].done=s[k];
+      pillMap[id].done=!!s[k];
       var el=document.getElementById(id);
-      if(el) el.classList.toggle('done',s[k]);
+      if(el) el.classList.toggle('done',!!s[k]);
     }
   });
   Object.keys(cardPills).forEach(function(cid){ updateCardProg(cid); });
   updateProgDisplay();
 }
 
-function cloudLoad(cb){
-  fetch(BIN_URL+'/latest',{
-    headers:{'X-Master-Key':API_KEY,'X-Bin-Meta':'false'}
-  })
-  .then(function(r){
-    if(!r.ok) throw new Error(r.status);
-    return r.json();
-  })
-  .then(function(data){ cb(data.record||data||{}); })
-  .catch(function(e){ console.warn('Load failed:',e); cb(null); });
+function dbLoad(cb){
+  fetch(DB_URL)
+    .then(function(r){ return r.json(); })
+    .then(function(data){ cb(data||{}); })
+    .catch(function(e){ console.warn('Load failed:',e); cb(null); });
 }
 
-function cloudSave(){
-  if(saving) return;
-  saving=true;
-  var state=getState();
-  try{ localStorage.setItem('uni_tracker_v1',JSON.stringify(state)); }catch(e){}
-  fetch(BIN_URL,{
-    method:'PUT',
-    headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},
-    body:JSON.stringify(state)
-  })
-  .then(function(r){
-    saving=false;
-    if(r.ok) showInd('Saved \u2713');
-    else { r.text().then(function(t){console.warn('Save error:',t);}); showInd('Save failed',true); }
-  })
-  .catch(function(e){ saving=false; console.warn('Save error:',e); showInd('Offline \u2014 saved locally',true); });
+function dbSave(){
+  clearTimeout(saveDebounce);
+  saveDebounce=setTimeout(function(){
+    var state=getState();
+    try{ localStorage.setItem('uni_tracker_v1',JSON.stringify(state)); }catch(e){}
+    fetch(DB_URL,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(state)
+    })
+    .then(function(r){
+      if(r.ok) showInd('Saved \u2713');
+      else showInd('Save failed',true);
+    })
+    .catch(function(){ showInd('Offline \u2014 saved locally',true); });
+  },600);
 }
 
 function makePillEl(task,cardId,stableKey){
@@ -328,7 +321,7 @@ for(var wk=1;wk<=12;wk++){
 container.appendChild(buildExamCard());
 updateProgDisplay();
 
-cloudLoad(function(cloudState){
+dbLoad(function(cloudState){
   var localState={};
   try{ var r=localStorage.getItem('uni_tracker_v1'); if(r) localState=JSON.parse(r); }catch(e){}
   var state=(cloudState&&Object.keys(cloudState).length)?cloudState:localState;
@@ -356,7 +349,7 @@ function tickPill(id){
   if(!pillMap[id]) return;
   pillMap[id].done=!pillMap[id].done;
   document.getElementById(id).classList.toggle('done',pillMap[id].done);
-  updateCardProg(pillMap[id].cardId); updateProgDisplay(); cloudSave();
+  updateCardProg(pillMap[id].cardId); updateProgDisplay(); dbSave();
 }
 function tickWeek(cardId){
   var pids=cardPills[cardId]||[];
@@ -366,7 +359,7 @@ function tickWeek(cardId){
     pillMap[pid].done=!allDone;
     document.getElementById(pid).classList.toggle('done',!allDone);
   });
-  updateCardProg(cardId); updateProgDisplay(); cloudSave();
+  updateCardProg(cardId); updateProgDisplay(); dbSave();
 }
 function delPill(e,id){
   e.stopPropagation();
@@ -375,7 +368,7 @@ function delPill(e,id){
   document.getElementById(id).remove();
   cardPills[cardId]=(cardPills[cardId]||[]).filter(function(p){return p!==id;});
   delete pillMap[id];
-  updateCardProg(cardId); updateProgDisplay(); cloudSave();
+  updateCardProg(cardId); updateProgDisplay(); dbSave();
 }
 function addTask(key,cardId,pillsDivId){
   var typeEl=document.getElementById('sel-type-'+key);
@@ -387,7 +380,7 @@ function addTask(key,cardId,pillsDivId){
   var div=document.getElementById(pillsDivId);
   if(div) div.appendChild(makePillEl(task,cardId,sk));
   labelEl.value=''; if(dueEl) dueEl.value='';
-  updateCardProg(cardId); updateProgDisplay(); cloudSave();
+  updateCardProg(cardId); updateProgDisplay(); dbSave();
 }
 function toggleEdit(){
   editMode=!editMode;

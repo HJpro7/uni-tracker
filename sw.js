@@ -8,7 +8,7 @@ self.addEventListener('message', function(e){
         body: e.data.body,
         tag: e.data.tag,
         icon: '',
-        renotify: false
+        requireInteraction: true
       })
     );
   }

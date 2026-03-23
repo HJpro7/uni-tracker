@@ -270,14 +270,12 @@ var BASE_DEADLINES=[
 var BASE_GANTT=[
   {lbl:'CAD',bars:[
     {cls:'g-cad1',s:new Date(2026,1,16),e:new Date(2026,3,10),txt:'Assignment',dlId:'dl-cad-asgn'},
-    {cls:'g-cad2',s:new Date(2026,4,4),e:new Date(2026,4,18),txt:'Lab report',dlId:'dl-cad-lab'},
   ]},
-  {lbl:'Vibrations',bars:[{cls:'g-vib1',s:new Date(2026,4,11),e:new Date(2026,4,25),txt:'Lab report',dlId:'dl-vib-lab'}]},
+  {lbl:'Vibrations',bars:[]},
   {lbl:'Materials',bars:[
     {cls:'g-mat1',s:new Date(2026,2,1),e:new Date(2026,3,5),txt:'Case study',dlId:'dl-mat-cs'},
-    {cls:'g-mat2',s:new Date(2026,4,11),e:new Date(2026,4,25),txt:'Lab report',dlId:'dl-mat-lab'},
   ]},
-  {lbl:'Heat',bars:[{cls:'g-hea1',s:new Date(2026,4,18),e:new Date(2026,5,1),txt:'Lab report',dlId:'dl-hea-lab'}]},
+  {lbl:'Heat',bars:[]},
   {lbl:'General',bars:[
     {cls:'g-gen1',s:BREAK_START,e:BREAK_END,txt:'Break'},
     {cls:'g-gen2',s:new Date(2026,5,1),e:new Date(2026,5,21),txt:'Exams',dlId:'dl-exams'},
@@ -817,6 +815,47 @@ function filt(val,btn){
   var bd=document.getElementById('break-divider');
   if(bd)bd.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
 }
+
+function requestNotifPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+
+function checkDeadlineNotifications(){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  var thresholds=[1,3,7];
+  getAllDeadlines().forEach(function(dl){
+    if(dl.done||dl.deleted)return;
+    var refDate=dl.showStart?dl.start:dl.end;
+    if(!refDate)return;
+    var days=daysUntil(refDate);
+    thresholds.forEach(function(t){
+      if(days===t){
+        var title=days===1?'Due tomorrow!':days+' days left';
+        var body=dl.subj+' — '+dl.label+' ('+fmtDate(refDate)+')';
+        new Notification(title,{body:body,icon:'',tag:dl.id+'-'+t});
+      }
+    });
+    if(days===0){
+      new Notification('Due today!',{
+        body:dl.subj+' — '+dl.label,
+        icon:'',tag:dl.id+'-0'
+      });
+    }
+  });
+}
+
+requestNotifPermission();
+setTimeout(function(){
+  if(Notification.permission==='granted') checkDeadlineNotifications();
+  else if(Notification.permission==='default'){
+    Notification.requestPermission().then(function(p){
+      if(p==='granted') checkDeadlineNotifications();
+    });
+  }
+}, 2000);
 </script>
 </body>
 </html>

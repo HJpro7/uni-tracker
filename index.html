@@ -817,55 +817,62 @@ function filt(val,btn){
   if(bd)bd.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
 }
 
-function requestNotifPermission(){
-  if(!('Notification' in window))return;
-  if(Notification.permission==='default'){
-    Notification.requestPermission();
+function registerSW(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('SW reg failed:',e);});
   }
+}
+
+function sendNotif(title,body,tag){
+  if(!('serviceWorker' in navigator)||!navigator.serviceWorker.controller)return;
+  navigator.serviceWorker.controller.postMessage({type:'notify',title:title,body:body,tag:tag});
 }
 
 function checkDeadlineNotifications(){
   if(!('Notification' in window)||Notification.permission!=='granted')return;
-  var thresholds=[1,3,7];
   getAllDeadlines().forEach(function(dl){
     if(dl.done||dl.deleted)return;
     var refDate=dl.showStart?dl.start:dl.end;
     if(!refDate)return;
     var days=daysUntil(refDate);
-    if(days<=0){
-      new Notification('Due today!',{body:dl.subj+' — '+dl.label,tag:dl.id+'-0'});
-    } else if(days<=1){
-      new Notification('Due tomorrow!',{body:dl.subj+' — '+dl.label+' ('+fmtDate(refDate)+')',tag:dl.id+'-1'});
-    } else if(days<=3){
-      new Notification('Due in '+days+' days',{body:dl.subj+' — '+dl.label+' ('+fmtDate(refDate)+')',tag:dl.id+'-3'});
-    } else if(days<=7){
-      new Notification('Due in '+days+' days',{body:dl.subj+' — '+dl.label+' ('+fmtDate(refDate)+')',tag:dl.id+'-7'});
-    }
+    var title,tag;
+    if(days<=0){title='Due today!';tag=dl.id+'-0';}
+    else if(days<=1){title='Due tomorrow!';tag=dl.id+'-1';}
+    else if(days<=3){title='Due in '+days+' days';tag=dl.id+'-3';}
+    else if(days<=7){title='Due in '+days+' days';tag=dl.id+'-7';}
+    else return;
+    var body=dl.subj+' — '+dl.label+(refDate?' ('+fmtDate(refDate)+')':'');
+    sendNotif(title,body,tag);
   });
+}
+
+function requestNotifPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='default'){
+    Notification.requestPermission().then(function(p){
+      if(p==='granted') setTimeout(checkDeadlineNotifications,500);
+    });
+  }
 }
 
 function testNotif(){
   if(!('Notification' in window)){alert('Notifications not supported in this browser.');return;}
-  if(Notification.permission==='denied'){alert('Notifications are blocked. Go to browser site settings and allow notifications for this page, then refresh.');return;}
+  if(Notification.permission==='denied'){alert('Notifications blocked — go to site settings, allow notifications, then refresh.');return;}
   if(Notification.permission==='default'){
     Notification.requestPermission().then(function(p){
-      if(p==='granted') new Notification('Test notification',{body:'Notifications are working!'});
+      if(p==='granted'){registerSW();setTimeout(function(){sendNotif('Test','Notifications are working!','test-1');},1000);}
       else alert('Permission denied.');
     });
     return;
   }
-  new Notification('Test notification',{body:'Notifications are working! Deadline checks will fire on page load.'});
-  checkDeadlineNotifications();
+  sendNotif('Test notification','Notifications are working!','test-1');
+  setTimeout(checkDeadlineNotifications,500);
 }
+registerSW();
 requestNotifPermission();
 setTimeout(function(){
   if(Notification.permission==='granted') checkDeadlineNotifications();
-  else if(Notification.permission==='default'){
-    Notification.requestPermission().then(function(p){
-      if(p==='granted') checkDeadlineNotifications();
-    });
-  }
-}, 2000);
+}, 3000);
 </script>
 </body>
 </html>

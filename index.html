@@ -351,6 +351,19 @@ function buildDeadlines(){
         var sr=document.createElement('div');sr.className='subtask-row';
         var cb=document.createElement('div');cb.className='sub-cb'+(s.done?' done':'');
         var lbl=document.createElement('span');lbl.className='sub-label'+(s.done?' done':'');lbl.textContent=s.label;
+        lbl.style.cursor='text';lbl.title='Click to edit';
+        lbl.addEventListener('click',function(){
+          var inp2=document.createElement('input');
+          inp2.type='text';inp2.value=s.label;
+          inp2.style.cssText='font-size:12px;padding:1px 6px;border-radius:6px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);flex:1;font-family:inherit;height:22px;';
+          lbl.replaceWith(inp2);inp2.focus();inp2.select();
+          function saveEdit(){
+            var v=inp2.value.trim()||s.label;
+            s.label=v;refreshSubtasks();saveSubtasks();
+          }
+          inp2.addEventListener('blur',saveEdit);
+          inp2.addEventListener('keydown',function(e){if(e.key==='Enter')inp2.blur();if(e.key==='Escape'){s.label=s.label;refreshSubtasks();}});
+        });
         cb.addEventListener('click',function(){
           s.done=!s.done;
           cb.classList.toggle('done',s.done);

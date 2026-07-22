@@ -255,28 +255,34 @@ var BASE_DEADLINES=[
   {id:'dl-mh-exam',   subj:'Materials Handling', label:'Final exam (40%)',                       start:EX_START,           end:EX_END,             done:false,deleted:false,showStart:true},
 ];
 
-var BASE_GANTT=[
-  {lbl:'Manufacturing',bars:[
-    {cls:'g-vib1',s:new Date(2026,6,20),e:new Date(2026,9,16),txt:'Group Project Report',dlId:'dl-mfg-report'},
-  ]},
-  {lbl:'Comms',bars:[
-    {cls:'g-cad1',s:new Date(2026,6,20),e:new Date(2026,8,7), txt:'Case study',         dlId:'dl-comms-cs'},
-    {cls:'g-cad1',s:new Date(2026,8,14),e:new Date(2026,9,26),txt:'Group presentation', dlId:'dl-comms-grp'},
-  ]},
-  {lbl:'Mach. Design',bars:[
-    {cls:'g-cad1',s:new Date(2026,6,20),e:new Date(2026,9,4), txt:'Assignment',         dlId:'dl-md-asgn'},
-    {cls:'g-cad2',s:new Date(2026,8,9), e:new Date(2026,8,9), txt:'Class test',         dlId:'dl-md-test'},
-  ]},
-  {lbl:'Mat. Handling',bars:[
-    {cls:'g-hea1',s:new Date(2026,6,20),e:new Date(2026,8,15),txt:'Indiv. Project',     dlId:'dl-mh-indiv'},
-    {cls:'g-hea1',s:new Date(2026,6,20),e:new Date(2026,9,21),txt:'Group Project',      dlId:'dl-mh-group'},
-  ]},
+var GANTT_SUBJ_LBL={'Manufacturing':'Manufactur.','Comms':'Comms','Machine Design':'Mach. Design','Materials Handling':'Mat. Handling'};
+var GANTT_FIXED=[
   {lbl:'General',bars:[
-    {cls:'g-gen1',s:B1_START,e:B1_END,  txt:'Study Break'},
-    {cls:'g-gen1',s:B2_START,e:B2_END,  txt:'Study Break'},
-    {cls:'g-gen2',s:EX_START, e:EX_END, txt:'Exams'},
+    {cls:'g-gen1',s:B1_START,e:B1_END,txt:'Study Break'},
+    {cls:'g-gen1',s:B2_START,e:B2_END,txt:'Study Break'},
+    {cls:'g-gen2',s:EX_START,e:EX_END,txt:'Exams'},
   ]},
 ];
+function getGanttRows(){
+  var rows=[];
+  var dlRows={};
+  var allDls=BASE_DEADLINES.filter(function(d){return !d.deleted&&!d.done;})
+    .concat(userDeadlines.filter(function(d){return !d.deleted&&!d.done;}));
+  allDls.forEach(function(dl){
+    if(!dl.start&&!dl.end)return;
+    var s=dl.start||(new Date(dl.end-1209600000));
+    var e=dl.end||(new Date(+dl.start+1209600000));
+    var lbl=GANTT_SUBJ_LBL[dl.subj]||dl.subj;
+    if(!dlRows[lbl])dlRows[lbl]=[];
+    dlRows[lbl].push({cls:SUBJ_BAR[dl.subj]||'g-gen2',s:s,e:e,txt:dl.label,dlId:dl.id});
+  });
+  SUBJ_ORDER.forEach(function(subj){
+    var lbl=GANTT_SUBJ_LBL[subj]||subj;
+    if(dlRows[lbl])rows.push({lbl:lbl,bars:dlRows[lbl]});
+  });
+  GANTT_FIXED.forEach(function(r){rows.push(r);});
+  return rows;
+}
 
 function pct(d){return Math.max(0,Math.min(100,(d-GS)/GSPAN*100));}
 function fmtDate(d){return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];}
@@ -596,21 +602,7 @@ function buildGantt(){
     line.style.left='calc(64px + 8px + (100% - 72px)*'+pct(m.d)/100+')';
     wrap.appendChild(line);
   });
-  var rows=BASE_GANTT.map(function(r){
-    return {lbl:r.lbl,bars:r.bars.filter(function(b){
-      if(!b.dlId)return true;
-      var dl=BASE_DEADLINES.find(function(d){return d.id===b.dlId;});
-      return !dl||!dl.done;
-    })};
-  });
-  userDeadlines.filter(function(d){return !d.deleted&&!d.done&&(d.start||d.end);}).forEach(function(dl){
-    var s=dl.start||(new Date(dl.end-1209600000));
-    var e=dl.end||(new Date(+dl.start+1209600000));
-    var existing=rows.find(function(r){return r.lbl===dl.subj;});
-    var bar={cls:SUBJ_BAR[dl.subj]||'g-gen2',s:s,e:e,txt:dl.label};
-    if(existing)existing.bars.push(bar);
-    else rows.push({lbl:dl.subj,bars:[bar]});
-  });
+  var rows=getGanttRows();
   rows.forEach(function(r){
     var row=document.createElement('div');row.className='gantt-row';
     var lbl=document.createElement('div');lbl.className='gantt-lbl';lbl.textContent=r.lbl;

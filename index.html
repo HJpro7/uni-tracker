@@ -7,18 +7,16 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#ffffff;--bg2:#f5f4f0;
-  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+  --bg:#fff;--bg2:#f5f4f0;
+  --border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);
   --text:#1a1a18;--text2:#6b6a65;--text3:#9b9a95;
   --green:#1D9E75;--red:#E24B4A;--amber:#BA7517;
 }
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#1a1a18;--bg2:#242422;
-    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);
-    --text:#e8e6df;--text2:#9b9a95;--text3:#6b6a65;
-  }
-}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1a1a18;--bg2:#242422;
+  --border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.18);
+  --text:#e8e6df;--text2:#9b9a95;--text3:#6b6a65;
+}}
 body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 24px 60px;display:flex;justify-content:center;}
 .container{width:100%;max-width:1400px;}
 h1{font-size:22px;font-weight:600;margin-bottom:3px;}
@@ -27,12 +25,12 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
 .fbtn{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:background .15s;font-family:inherit;}
 .fbtn:hover,.fbtn.active{background:var(--bg2);color:var(--text);}
 .fbtn.red{color:var(--red);}
-.edit-btn{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;}
-.edit-btn.on{background:#FAEEDA;color:#633806;border-color:#EF9F27;}
-@media(prefers-color-scheme:dark){.edit-btn.on{background:#412402;color:#FAC775;}}
+.ebtn{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;}
+.ebtn.on{background:#FAEEDA;color:#633806;border-color:#EF9F27;}
+@media(prefers-color-scheme:dark){.ebtn.on{background:#412402;color:#FAC775;}}
 .spacer{flex:1;}
 .save-ind{font-size:11px;color:var(--text3);opacity:0;transition:opacity .4s;margin-right:5px;}
-.save-ind.error{color:var(--red);}
+.save-ind.err{color:var(--red);}
 .prog-wrap{display:flex;align-items:center;gap:8px;}
 .prog-track{width:90px;height:4px;background:var(--border);border-radius:2px;}
 .prog-fill{height:4px;background:var(--green);border-radius:2px;transition:width .3s;}
@@ -45,36 +43,33 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
 .panel-head h3{font-size:13px;font-weight:600;color:var(--text2);margin:0;}
 .panel-btn{font-size:11.5px;padding:2px 10px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;}
 .panel-btn:hover{background:var(--bg2);}
-.break-divider{text-align:center;font-size:11px;font-style:italic;color:var(--text3);padding:9px 0;border-top:0.5px dashed var(--border);border-bottom:0.5px dashed var(--border);margin:7px 0;}
+.break-div{text-align:center;font-size:11px;font-style:italic;color:var(--text3);padding:9px 0;border-top:0.5px dashed var(--border);border-bottom:0.5px dashed var(--border);margin:7px 0;}
 .week-card{border:0.5px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;background:var(--bg);transition:opacity .25s;}
 .week-card.hidden{display:none;}
 .week-card.behind{border-left:3px solid var(--red);}
 .week-card.current{border-left:3px solid var(--green);}
 .week-card.exam-card{border-left:3px solid var(--amber);}
-.week-card.all-done{opacity:0.42;}
+.week-card.all-done{opacity:.42;}
 .card-head{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;user-select:none;transition:background .15s;}
 .card-head:hover{background:var(--bg2);}
-.wk-num{font-size:14px;font-weight:600;color:var(--text);}
+.wk-num{font-size:14px;font-weight:600;}
 .wk-dates{font-size:12px;color:var(--text3);}
 .wk-badge{font-size:10.5px;padding:2px 9px;border-radius:9px;font-weight:500;}
-.badge-current{background:#EAF3DE;color:#27500A;}
-.badge-behind{background:#FCEBEB;color:#A32D2D;}
-@media(prefers-color-scheme:dark){
-  .badge-current{background:#173404;color:#C0DD97;}
-  .badge-behind{background:#501313;color:#F09595;}
-}
+.badge-cur{background:#EAF3DE;color:#27500A;}
+.badge-beh{background:#FCEBEB;color:#A32D2D;}
+@media(prefers-color-scheme:dark){.badge-cur{background:#173404;color:#C0DD97;}.badge-beh{background:#501313;color:#F09595;}}
 .card-prog{font-size:11.5px;color:var(--text3);margin-left:auto;}
-.chevron{width:13px;height:13px;display:flex;align-items:center;justify-content:center;transition:transform .2s;flex-shrink:0;}
-.chevron svg{width:11px;height:11px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.week-card.collapsed .chevron{transform:rotate(-90deg);}
+.chev{width:13px;height:13px;display:flex;align-items:center;justify-content:center;transition:transform .2s;flex-shrink:0;}
+.chev svg{width:11px;height:11px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.week-card.collapsed .chev{transform:rotate(-90deg);}
 .week-card.collapsed .card-body{display:none;}
 .subj-row{display:flex;align-items:center;gap:10px;padding:8px 16px;border-top:0.5px solid var(--border);}
-.subj-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .dot-Manufacturing{background:#1D9E75;}.dot-Comms{background:#7BC67E;}.dot-MachineDesign{background:#378ADD;}.dot-MaterialsHandling{background:#D85A30;}
-.subj-name{font-size:12.5px;font-weight:600;color:var(--text);width:80px;flex-shrink:0;}
+.subj-name{font-size:12.5px;font-weight:600;width:110px;flex-shrink:0;}
 .pills{display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center;}
 .pill{font-size:12px;padding:3px 11px;border-radius:20px;cursor:pointer;transition:opacity .15s;user-select:none;display:flex;align-items:center;gap:4px;font-family:inherit;}
-.pill.done{opacity:0.25;text-decoration:line-through;}
+.pill.done{opacity:.25;text-decoration:line-through;}
 .pill::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;}
 .pill.done::before{background:currentColor;}
 .p-lec{background:#E6F1FB;color:#0C447C;}.p-tut{background:#E1F5EE;color:#085041;}
@@ -86,76 +81,72 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
   .p-asgn{background:#712B13;color:#F5C4B3;}.p-exam{background:#633806;color:#FAC775;}
 }
 .due{font-size:10.5px;color:var(--red);font-weight:500;margin-left:1px;}
-.del-pill{display:none;margin-left:2px;font-size:11px;opacity:0.55;cursor:pointer;}
+.del-pill{display:none;margin-left:2px;font-size:11px;opacity:.55;cursor:pointer;}
 .edit-mode .del-pill{display:inline;}
 .pill:hover .del-pill{opacity:1;}
 .add-row{display:none;padding:7px 16px 9px;border-top:0.5px solid var(--border);gap:6px;flex-wrap:wrap;align-items:center;}
 .edit-mode .add-row{display:flex;}
-.add-row select,.add-row input{font-size:12px;padding:3px 9px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);height:28px;font-family:inherit;}
-.add-row input[type="text"]{width:130px;}
-.add-row input[type="date"]{width:140px;}
-.add-row button{font-size:12px;padding:3px 11px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;}
+.add-row select,.add-row input,.add-dl-form select,.add-dl-form input{font-size:12px;padding:3px 9px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);height:28px;font-family:inherit;}
+.add-row input[type="text"],.add-dl-form input[type="text"]{width:130px;}
+.add-row input[type="date"],.add-dl-form input[type="date"]{width:140px;}
+.add-row button,.add-dl-form button{font-size:12px;padding:3px 11px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;}
 .add-lbl{font-size:12px;color:var(--text3);}
 .week-cb{width:17px;height:17px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s;}
 .week-cb.ticked{background:var(--green);border-color:var(--green);}
 .week-cb.ticked::after{content:'';display:block;width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px);}
-.asgn-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);}
-.asgn-row:last-child{border-bottom:none;}
-.asgn-row.done-asgn{opacity:0.32;}
+.dl-cb{width:15px;height:15px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s;}
+.dl-cb.ticked{background:var(--green);border-color:var(--green);}
+.dl-cb.ticked svg{display:block;}
+.dl-cb svg{display:none;width:9px;height:6px;}
 .asgn-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.asgn-label{font-size:12.5px;color:var(--text);flex:1;}
-.asgn-dates{font-size:11px;color:var(--text3);white-space:nowrap;margin-right:2px;}
+.asgn-label{font-size:12.5px;color:var(--text);flex:1;cursor:text;}
+.asgn-dates{font-size:11px;color:var(--text3);white-space:nowrap;margin-right:2px;cursor:text;}
 .asgn-badge{font-size:11px;padding:2px 8px;border-radius:9px;font-weight:500;white-space:nowrap;cursor:pointer;}
 .dl-urgent{background:#FCEBEB;color:#A32D2D;}.dl-soon{background:#FAEEDA;color:#633806;}
 .dl-ok{background:#EAF3DE;color:#27500A;}.dl-tbc{background:var(--bg2);color:var(--text3);}
 @media(prefers-color-scheme:dark){
-  .dl-urgent{background:#501313;color:#F09595;}.dl-soon{background:#412402;color:#FAC775;}
-  .dl-ok{background:#173404;color:#C0DD97;}
+  .dl-urgent{background:#501313;color:#F09595;}.dl-soon{background:#412402;color:#FAC775;}.dl-ok{background:#173404;color:#C0DD97;}
 }
-.del-asgn{font-size:11px;color:var(--text3);cursor:pointer;opacity:0.5;padding:0 2px;flex-shrink:0;display:none;}
+.del-asgn{font-size:11px;color:var(--text3);cursor:pointer;opacity:.5;padding:0 2px;flex-shrink:0;display:none;}
 .del-asgn:hover{opacity:1;color:var(--red);}
 .edit-mode .del-asgn{display:inline;}
-.subtasks-toggle{font-size:11px;color:var(--text3);cursor:pointer;padding:2px 5px;border-radius:4px;user-select:none;flex-shrink:0;white-space:nowrap;}
-.subtasks-toggle:hover{background:var(--bg2);}
-.subtasks-wrap{padding:4px 0 8px 34px;display:flex;flex-direction:column;gap:4px;}
-.subtask-row{display:flex;align-items:center;gap:8px;}
+.sub-toggle{font-size:11px;color:var(--text3);cursor:pointer;padding:2px 5px;border-radius:4px;user-select:none;flex-shrink:0;white-space:nowrap;}
+.sub-toggle:hover{background:var(--bg2);}
+.sub-wrap{padding:4px 0 8px 34px;display:flex;flex-direction:column;gap:4px;}
+.sub-row{display:flex;align-items:center;gap:8px;}
 .sub-cb{width:13px;height:13px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;transition:background .15s,border-color .15s;display:flex;align-items:center;justify-content:center;}
 .sub-cb.done{background:var(--green);border-color:var(--green);}
 .sub-cb.done::after{content:'';display:block;width:7px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px);}
-.sub-label{font-size:12px;color:var(--text2);flex:1;}
-.sub-label.done{text-decoration:line-through;opacity:0.38;}
+.sub-label{font-size:12px;color:var(--text2);flex:1;cursor:text;}
+.sub-label.done{text-decoration:line-through;opacity:.38;}
 .sub-prog{font-size:10.5px;color:var(--text3);flex-shrink:0;}
 .add-sub-row{display:flex;align-items:center;gap:6px;margin-top:2px;}
 .add-sub-row input{font-size:12px;padding:2px 8px;border-radius:7px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);height:26px;font-family:inherit;flex:1;}
 .add-sub-row button{font-size:11.5px;padding:2px 9px;border-radius:7px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;white-space:nowrap;}
 .add-dl-form{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:10px 0 2px;border-top:0.5px solid var(--border);margin-top:8px;}
 .add-dl-form label{font-size:11px;color:var(--text3);}
-.add-dl-form select,.add-dl-form input{font-size:12px;padding:3px 9px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);height:28px;font-family:inherit;}
-.add-dl-form input[type="text"]{width:120px;}
-.add-dl-form input[type="date"]{width:136px;}
-.add-dl-form button{font-size:12px;padding:3px 11px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;}
 .date-pair{display:flex;align-items:center;gap:5px;}
+.grp-hdr{display:flex;align-items:center;gap:7px;padding:10px 0 5px;border-bottom:0.5px solid var(--border);}
+.grp-hdr span{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;}
 .gantt-month-row{position:relative;height:18px;margin-bottom:7px;}
 .gantt-month-lbl{position:absolute;font-size:11px;color:var(--text3);transform:translateX(-50%);}
 .gantt-rows-wrap{position:relative;}
 .gantt-grid-line{position:absolute;top:0;bottom:0;width:0.5px;background:var(--border);z-index:1;pointer-events:none;}
-.gantt-row{display:flex;align-items:center;margin-bottom:7px;gap:8px;position:relative;z-index:2;}
-.gantt-lbl{font-size:11.5px;color:var(--text2);width:64px;flex-shrink:0;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gantt-row{display:flex;align-items:flex-start;margin-bottom:7px;gap:8px;position:relative;z-index:2;}
+.gantt-lbl{font-size:11.5px;color:var(--text2);width:64px;flex-shrink:0;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-top:3px;}
 .gantt-track{flex:1;border-radius:5px;background:var(--bg2);position:relative;min-height:24px;}
 .gantt-bar{position:absolute;top:3px;height:18px;border-radius:4px;font-size:10.5px;font-weight:500;display:flex;align-items:center;padding:0 7px;overflow:hidden;white-space:nowrap;min-width:4px;z-index:2;cursor:default;}
 .gantt-tooltip{position:fixed;background:var(--text);color:var(--bg);font-size:11px;padding:4px 9px;border-radius:7px;pointer-events:none;z-index:999;white-space:nowrap;opacity:0;transition:opacity .15s;}
-.gantt-today-line{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--red);opacity:0.6;z-index:5;}
+.gantt-today-line{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--red);opacity:.6;z-index:5;}
 .gantt-today-row{position:relative;height:16px;margin-top:5px;}
 .gantt-today-lbl{position:absolute;font-size:10px;color:var(--red);font-weight:600;transform:translateX(-50%);white-space:nowrap;}
 .g-cad1{background:#B5D4F4;color:#0C447C;}.g-cad2{background:#378ADD;color:#fff;}
 .g-vib1{background:#9FE1CB;color:#085041;}
-.g-mat1{background:#CECBF6;color:#3C3489;}.g-mat2{background:#7F77DD;color:#fff;}
 .g-hea1{background:#F5C4B3;color:#712B13;}
 .g-gen1{background:#D3D1C7;color:#444441;}.g-gen2{background:#FAEEDA;color:#633806;}
 @media(prefers-color-scheme:dark){
   .g-cad1{background:#0C447C;color:#B5D4F4;}.g-cad2{background:#185FA5;color:#E6F1FB;}
   .g-vib1{background:#085041;color:#9FE1CB;}
-  .g-mat1{background:#3C3489;color:#CECBF6;}.g-mat2{background:#534AB7;color:#EEEDFE;}
   .g-hea1{background:#712B13;color:#F5C4B3;}
   .g-gen1{background:#444441;color:#D3D1C7;}.g-gen2{background:#412402;color:#FAC775;}
 }
@@ -168,7 +159,7 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
 <div class="container">
 <div class="loading-overlay" id="loader">Loading your tracker...</div>
 <h1>Uni semester tracker &mdash; Sem 2</h1>
-<p class="subtitle">2026 Sem 2 &mdash; Manufacturing &middot; Comms &middot; Machine Design &middot; Materials Handling</p>
+<p class="subtitle">2026 &mdash; Manufacturing &middot; Comms &middot; Machine Design &middot; Materials Handling</p>
 <div class="top-bar">
   <button class="fbtn active" onclick="filt('all',this)">All</button>
   <button class="fbtn red" onclick="filt('behind',this)">Behind</button>
@@ -178,9 +169,9 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
   <button class="fbtn" onclick="filt('Machine Design',this)">Machine Design</button>
   <button class="fbtn" onclick="filt('Materials Handling',this)">Materials Handling</button>
   <div class="spacer"></div>
-  <span class="save-ind" id="saveInd">Saved</span>
-  <button class="edit-btn" id="collapseToggle" onclick="toggleCollapseAll()">Collapse all</button>
-  <button class="edit-btn" id="editToggle" onclick="toggleEdit()">Edit mode</button>
+  <span class="save-ind" id="saveInd"></span>
+  <button class="ebtn" id="collapseToggle" onclick="toggleCollapseAll()">Collapse all</button>
+  <button class="ebtn" id="editToggle" onclick="toggleEdit()">Edit mode</button>
   <div class="prog-wrap">
     <div class="prog-track"><div class="prog-fill" id="prog" style="width:0%"></div></div>
     <span class="prog-txt" id="ptxt">0 / 0</span>
@@ -201,11 +192,10 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
       <div id="dlRows"></div>
       <div class="add-dl-form" id="addDlForm" style="display:none">
         <select id="dlSubj">
-          <option value="CAD">CAD</option>
-          <option value="Vibrations">Vibrations</option>
-          <option value="Materials">Materials</option>
-          <option value="Heat">Heat</option>
-          <option value="All">All</option>
+          <option value="Manufacturing">Manufacturing</option>
+          <option value="Comms">Comms</option>
+          <option value="Machine Design">Machine Design</option>
+          <option value="Materials Handling">Materials Handling</option>
         </select>
         <input type="text" id="dlLabel" placeholder="Task name"/>
         <div class="date-pair"><label>Start</label><input type="date" id="dlStart"/></div>
@@ -217,85 +207,52 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
 </div>
 </div>
 <script>
-var DB_URL='https://uni-tracker-f035f-default-rtdb.asia-southeast1.firebasedatabase.app/5f3bbc683d2bfb14/tasks.json';
-var DB_DL_URL='https://uni-tracker-f035f-default-rtdb.asia-southeast1.firebasedatabase.app/5f3bbc683d2bfb14/deadlines.json';
-var subjects=['Manufacturing','Comms','Machine Design','Materials Handling'];
-var pillCls={lec:'p-lec',tut:'p-tut',lab:'p-lab',wksh:'p-wksh',asgn:'p-asgn',exam:'p-exam'};
-var editMode=false,pillMap={},cardPills={},idCounter=0,saveTimer=null,saveDebounce=null,dlSaveDebounce=null;
+var DB_BASE='https://uni-tracker-f035f-default-rtdb.asia-southeast1.firebasedatabase.app/5f3bbc683d2bfb14/';
+var DB_URL=DB_BASE+'tasks.json';
+var DB_DL_URL=DB_BASE+'deadlines.json';
+var DB_ST_URL=DB_BASE+'subtasks.json';
+
+var SUBJECTS=['Manufacturing','Comms','Machine Design','Materials Handling'];
+var PILL_CLS={lec:'p-lec',tut:'p-tut',lab:'p-lab',wksh:'p-wksh',asgn:'p-asgn',exam:'p-exam'};
+var SUBJ_BAR={Manufacturing:'g-vib1',Comms:'g-cad1','Machine Design':'g-cad2','Materials Handling':'g-hea1'};
+var SUBJ_DOT={Manufacturing:'#1D9E75',Comms:'#7BC67E','Machine Design':'#378ADD','Materials Handling':'#D85A30'};
+var SUBJ_ORDER=['Manufacturing','Comms','Machine Design','Materials Handling'];
+
+var editMode=false,allCollapsed=false,completedOpen=false;
+var pillMap={},cardPills={},idCounter=0;
+var saveTimer=null,saveDebounce=null,dlDebounce=null;
 var deletedKeys=new Set();
-var chevSvg='<svg viewBox="0 0 11 11"><polyline points="2,3 5.5,7.5 9,3"/></svg>';
-function dotCssClass(subj){return 'dot-'+subj.replace(/\s+/g,'');}
-var SEMESTER_START=new Date(2026,6,20,0,0,0,0);
-var BREAK_START=new Date(2026,7,17,0,0,0,0);   // 17 Aug
-var BREAK_END=new Date(2026,7,24,0,0,0,0);     // 24 Aug (1 week)
-var BREAK2_START=new Date(2026,8,28,0,0,0,0);  // 28 Sep
-var BREAK2_END=new Date(2026,9,5,0,0,0,0);     // 5 Oct (1 week)
-var EXAM_START=new Date(2026,10,2,0,0,0,0);
-var EXAM_END=new Date(2026,10,13,0,0,0,0);
-var GS=new Date(2026,6,20,0,0,0,0);
-var GE=new Date(2026,10,20,0,0,0,0);
-var GSPAN=GE.getTime()-GS.getTime();
+var userDeadlines=[],subtasksMap={};
 
-function pct(d){return Math.max(0,Math.min(100,((d.getTime()-GS.getTime())/GSPAN)*100));}
-function fmtDate(d){var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return d.getDate()+' '+m[d.getMonth()];}
-function getWeekStart(wk){
-  var d=new Date(SEMESTER_START.getTime()+(wk-1)*7*24*60*60*1000);
-  if(d>=BREAK_START) d=new Date(d.getTime()+(BREAK_END.getTime()-BREAK_START.getTime()));
-  if(d>=BREAK2_START) d=new Date(d.getTime()+(BREAK2_END.getTime()-BREAK2_START.getTime()));
-  return d;
-}
-function getWeekLabel(wk){
-  var s=getWeekStart(wk),e=new Date(s.getTime()+6*24*60*60*1000);
-  return fmtDate(s)+' \u2013 '+fmtDate(e);
-}
-function getCurrentWeek(){
-  var now=new Date();now.setHours(0,0,0,0);
-  if(now<SEMESTER_START) return 1;
-  if((now>=BREAK_START&&now<BREAK_END)||(now>=BREAK2_START&&now<BREAK2_END)) return -1;
-  var adj=new Date(now.getTime());
-  if(now>=BREAK_END) adj=new Date(adj.getTime()-(BREAK_END.getTime()-BREAK_START.getTime()));
-  if(now>=BREAK2_END) adj=new Date(adj.getTime()-(BREAK2_END.getTime()-BREAK2_START.getTime()));
-  var days=Math.floor((adj.getTime()-SEMESTER_START.getTime())/(24*60*60*1000));
-  return Math.min(13,Math.max(1,Math.floor(days/7)+1));
-}
-var currentWeek=getCurrentWeek();
-function displayWk(wk){return wk;}
-function daysUntil(d){var n=new Date();n.setHours(0,0,0,0);return Math.round((d.getTime()-n.getTime())/86400000);}
-function badgeCls(days){
-  if(days===null)return 'dl-tbc';
-  if(days<0)return 'dl-tbc';
-  if(days<=7)return 'dl-urgent';
-  if(days<=21)return 'dl-soon';
-  return 'dl-ok';
-}
-function badgeTxt(days){
-  if(days===null)return 'TBC';
-  if(days<0)return 'Past';
-  if(days===0)return 'Today';
-  return days+'d';
-}
+var CHEV='<svg viewBox="0 0 11 11"><polyline points="2,3 5.5,7.5 9,3"/></svg>';
+var TICK_SVG='<svg width="9" height="6" viewBox="0 0 9 6" fill="none"><polyline points="1,3 3.5,5.5 8,1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-var subjDotCls={Manufacturing:'dot-Manufacturing',Comms:'dot-Comms','Machine Design':'dot-MachineDesign','Materials Handling':'dot-MaterialsHandling',All:''};
-var subjBarCls={Manufacturing:'g-vib1',Comms:'g-cad1','Machine Design':'g-cad2','Materials Handling':'g-hea1',All:'g-gen2'};
+var SEM_START=new Date(2026,6,20);
+var B1_START=new Date(2026,7,17),B1_END=new Date(2026,7,24);
+var B2_START=new Date(2026,8,28),B2_END=new Date(2026,9,5);
+var EX_START=new Date(2026,10,2),EX_END=new Date(2026,10,13);
+var GS=new Date(2026,6,20),GE=new Date(2026,10,20),GSPAN=GE-GS;
+var B1_LEN=B1_END-B1_START,B2_LEN=B2_END-B2_START;
 
-var userDeadlines=[];
-var completedOpen=false;
-var subtasksMap={};  // dlId -> [{label,done}]
+var MONTHS=[
+  {lbl:'Jul',d:new Date(2026,6,1)},{lbl:'Aug',d:new Date(2026,7,1)},
+  {lbl:'Sep',d:new Date(2026,8,1)},{lbl:'Oct',d:new Date(2026,9,1)},
+  {lbl:'Nov',d:new Date(2026,10,1)},
+];
 
 var BASE_DEADLINES=[
-  {id:'dl-md-test',subj:'Machine Design',label:'Class test (25%)',start:new Date(2026,8,9),end:new Date(2026,8,9),done:false,deleted:false},
-  {id:'dl-mh-indiv',subj:'Materials Handling',label:'Individual Project - Design of Silos (25%)',start:new Date(2026,6,20),end:new Date(2026,8,15),done:false,deleted:false},
-  {id:'dl-md-asgn',subj:'Machine Design',label:'Assignment (35%)',start:null,end:new Date(2026,9,4),done:false,deleted:false},
-  {id:'dl-mfg-report',subj:'Manufacturing',label:'Group Project Report (40%)',start:null,end:new Date(2026,9,16),done:false,deleted:false},
-  {id:'dl-mfg-poster',subj:'Manufacturing',label:'Group Project Poster (10%)',start:null,end:new Date(2026,9,19),done:false,deleted:false},
-  {id:'dl-mh-group',subj:'Materials Handling',label:'Group Project - Belt Conveyor (35%)',start:null,end:new Date(2026,9,21),done:false,deleted:false},
-  {id:'dl-comms-cs',subj:'Comms',label:'Case Study (30%) — date TBC',start:new Date(2026,6,20),end:new Date(2026,8,7),done:false,deleted:false},
-  {id:'dl-comms-grp',subj:'Comms',label:'Group Presentation & Report (30%) — date TBC',start:new Date(2026,8,14),end:new Date(2026,9,26),done:false,deleted:false},
-  {id:'dl-comms-port',subj:'Comms',label:'Portfolio (40%) — date TBC',start:null,end:null,done:false,deleted:false},
-  {id:'dl-mfg-exam',subj:'Manufacturing',label:'Final exam (40%)',start:new Date(2026,10,2),end:new Date(2026,10,13),done:false,deleted:false,showStart:true},
-  {id:'dl-md-exam',subj:'Machine Design',label:'Final exam (40%)',start:new Date(2026,10,2),end:new Date(2026,10,13),done:false,deleted:false,showStart:true},
-  {id:'dl-mh-exam',subj:'Materials Handling',label:'Final exam (40%)',start:new Date(2026,10,2),end:new Date(2026,10,13),done:false,deleted:false,showStart:true},
-
+  {id:'dl-md-test',   subj:'Machine Design',    label:'Class test (25%)',                        start:new Date(2026,8,9), end:new Date(2026,8,9), done:false,deleted:false},
+  {id:'dl-mh-indiv',  subj:'Materials Handling', label:'Individual Project — Design of Silos (25%)',start:new Date(2026,6,20),end:new Date(2026,8,15),done:false,deleted:false},
+  {id:'dl-md-asgn',   subj:'Machine Design',    label:'Assignment (35%)',                        start:null,               end:new Date(2026,9,4), done:false,deleted:false},
+  {id:'dl-comms-cs',  subj:'Comms',             label:'Case Study (30%) — date TBC',             start:new Date(2026,6,20),end:new Date(2026,8,7), done:false,deleted:false},
+  {id:'dl-mfg-report',subj:'Manufacturing',     label:'Group Project Report (40%)',              start:null,               end:new Date(2026,9,16),done:false,deleted:false},
+  {id:'dl-mfg-poster',subj:'Manufacturing',     label:'Group Project Poster (10%)',              start:null,               end:new Date(2026,9,19),done:false,deleted:false},
+  {id:'dl-mh-group',  subj:'Materials Handling', label:'Group Project — Belt Conveyor (35%)',    start:null,               end:new Date(2026,9,21),done:false,deleted:false},
+  {id:'dl-comms-grp', subj:'Comms',             label:'Group Presentation & Report (30%) — date TBC',start:new Date(2026,8,14),end:new Date(2026,9,26),done:false,deleted:false},
+  {id:'dl-comms-port',subj:'Comms',             label:'Portfolio (40%) — date TBC',              start:null,               end:null,               done:false,deleted:false},
+  {id:'dl-mfg-exam',  subj:'Manufacturing',     label:'Final exam (40%)',                        start:EX_START,           end:EX_END,             done:false,deleted:false,showStart:true},
+  {id:'dl-md-exam',   subj:'Machine Design',    label:'Final exam (40%)',                        start:EX_START,           end:EX_END,             done:false,deleted:false,showStart:true},
+  {id:'dl-mh-exam',   subj:'Materials Handling', label:'Final exam (40%)',                       start:EX_START,           end:EX_END,             done:false,deleted:false,showStart:true},
 ];
 
 var BASE_GANTT=[
@@ -303,42 +260,204 @@ var BASE_GANTT=[
     {cls:'g-vib1',s:new Date(2026,6,20),e:new Date(2026,9,16),txt:'Group Project Report',dlId:'dl-mfg-report'},
   ]},
   {lbl:'Comms',bars:[
-    {cls:'g-cad1',s:new Date(2026,6,20),e:new Date(2026,8,7),txt:'Case study',dlId:'dl-comms-cs'},
-    {cls:'g-cad1',s:new Date(2026,8,14),e:new Date(2026,9,26),txt:'Group presentation',dlId:'dl-comms-grp'},
+    {cls:'g-cad1',s:new Date(2026,6,20),e:new Date(2026,8,7), txt:'Case study',         dlId:'dl-comms-cs'},
+    {cls:'g-cad1',s:new Date(2026,8,14),e:new Date(2026,9,26),txt:'Group presentation', dlId:'dl-comms-grp'},
   ]},
-  {lbl:'Machine Design',bars:[
-    {cls:'g-cad2',s:new Date(2026,8,9),e:new Date(2026,8,9),txt:'Class test',dlId:'dl-md-test'},
-    {cls:'g-cad1',s:new Date(2026,6,20),e:new Date(2026,9,4),txt:'Assignment',dlId:'dl-md-asgn'},
+  {lbl:'Mach. Design',bars:[
+    {cls:'g-cad1',s:new Date(2026,6,20),e:new Date(2026,9,4), txt:'Assignment',         dlId:'dl-md-asgn'},
+    {cls:'g-cad2',s:new Date(2026,8,9), e:new Date(2026,8,9), txt:'Class test',         dlId:'dl-md-test'},
   ]},
   {lbl:'Mat. Handling',bars:[
-    {cls:'g-hea1',s:new Date(2026,6,20),e:new Date(2026,8,15),txt:'Indiv. Project',dlId:'dl-mh-indiv'},
-    {cls:'g-hea1',s:new Date(2026,6,20),e:new Date(2026,9,21),txt:'Group Project',dlId:'dl-mh-group'},
+    {cls:'g-hea1',s:new Date(2026,6,20),e:new Date(2026,8,15),txt:'Indiv. Project',     dlId:'dl-mh-indiv'},
+    {cls:'g-hea1',s:new Date(2026,6,20),e:new Date(2026,9,21),txt:'Group Project',      dlId:'dl-mh-group'},
   ]},
   {lbl:'General',bars:[
-    {cls:'g-gen1',s:BREAK_START,e:BREAK_END,txt:'Study Break'},
-    {cls:'g-gen1',s:BREAK2_START,e:BREAK2_END,txt:'Study Break'},
-    {cls:'g-gen2',s:EXAM_START,e:EXAM_END,txt:'Exams'},
+    {cls:'g-gen1',s:B1_START,e:B1_END,  txt:'Study Break'},
+    {cls:'g-gen1',s:B2_START,e:B2_END,  txt:'Study Break'},
+    {cls:'g-gen2',s:EX_START, e:EX_END, txt:'Exams'},
   ]},
 ];
 
+function pct(d){return Math.max(0,Math.min(100,(d-GS)/GSPAN*100));}
+function fmtDate(d){return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];}
+function daysUntil(d){var n=new Date();n.setHours(0,0,0,0);return Math.round((d-n)/864e5);}
+function badgeCls(days){return days===null||days<0?'dl-tbc':days<=7?'dl-urgent':days<=21?'dl-soon':'dl-ok';}
+function badgeTxt(days){return days===null?'TBC':days<0?'Past':days===0?'Today':days+'d';}
+function dotCls(subj){return 'dot-'+subj.replace(/\s+/g,'');}
+
+function getWeekStart(wk){
+  // Calendar weeks are straight through - no offset needed
+  return new Date(SEM_START.getTime()+(wk-1)*604800000);
+}
+function getWeekLabel(wk){
+  var s=getWeekStart(wk);
+  return fmtDate(s)+' \u2013 '+fmtDate(new Date(+s+518400000));
+}
+function getCurrentWeek(){
+  var now=new Date();now.setHours(0,0,0,0);
+  if(now<SEM_START)return 1;
+  // Return calendar week number (1-15), -1 if in break
+  var calWk=Math.floor((now-SEM_START)/604800000)+1;
+  if(calWk===5||calWk===11||calWk===15)return -1; // tuition-free weeks
+  return Math.min(15,Math.max(1,calWk));
+}
+var currentWeek=getCurrentWeek();
+
+var MD_TUT_WKS=[1,3,6,8,10,12,14]; // Machine Design fortnightly (skipping breaks)
+var MFG_TUT_WKS=[7,12];              // Manufacturing tutorial only these cal wks
+function getTasks(wk,subj){
+  var t=[];
+  if(subj==='Manufacturing'){
+    t.push({type:'lec',label:'Lecture'});
+    if(wk>=2)t.push({type:'lab',label:'Lab'});
+    if(MFG_TUT_WKS.indexOf(wk)>-1)t.push({type:'tut',label:'Tutorial'});
+  }else if(subj==='Comms'){
+    t.push({type:'wksh',label:'Seminar'});
+    t.push({type:'tut',label:'Tutorial'});
+  }else if(subj==='Machine Design'){
+    t.push({type:'lec',label:'Lecture'});
+    if(MD_TUT_WKS.indexOf(wk)>-1)t.push({type:'tut',label:'Tutorial'});
+  }else if(subj==='Materials Handling'){
+    t.push({type:'lec',label:'Lecture'});
+    if(wk>=2)t.push({type:'tut',label:'Tutorial'});
+  }
+  return t;
+}
+
 function getAllDeadlines(){
-  var baseIds=BASE_DEADLINES.map(function(d){return d.id;});
-  var baseKeys=BASE_DEADLINES.map(function(d){return d.subj+'|'+d.label;});
-  var filteredUser=userDeadlines.filter(function(d){
-    if(d.deleted)return false;
-    // Skip if same id as a base deadline or same subj+label
-    if(baseIds.indexOf(d.id)>-1)return false;
-    if(baseKeys.indexOf(d.subj+'|'+d.label)>-1)return false;
-    return true;
-  });
   return BASE_DEADLINES.filter(function(d){return !d.deleted;})
-    .concat(filteredUser)
+    .concat(userDeadlines.filter(function(d){return !d.deleted;}))
     .sort(function(a,b){
       if(!a.end&&!b.end)return 0;
       if(!a.end)return 1;
       if(!b.end)return -1;
-      return a.end.getTime()-b.end.getTime();
+      return a.end-b.end;
     });
+}
+
+function makeDlRow(dl){
+  var refDate=dl.showStart?dl.start:dl.end;
+  var days=refDate?daysUntil(refDate):null;
+  var dStr=dl.start&&dl.end?fmtDate(dl.start)+' \u2013 '+fmtDate(dl.end):dl.end?fmtDate(dl.end):dl.start?fmtDate(dl.start):'TBC';
+  var color=SUBJ_DOT[dl.subj]||'var(--amber)';
+  var subs=subtasksMap[dl.id]||[];
+  var subsDone=subs.filter(function(s){return s.done;}).length;
+  var dlId=dl.id;
+
+  var wrap=document.createElement('div');
+  wrap.style.cssText='border-bottom:0.5px solid var(--border);padding-bottom:0;';
+
+  var mainRow=document.createElement('div');
+  mainRow.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 0;';
+
+  var cb=document.createElement('div');
+  cb.className='dl-cb'+(dl.done?' ticked':'');
+  cb.innerHTML=dl.done?TICK_SVG:'';
+  cb.addEventListener('click',function(){toggleDl(dlId);});
+
+  var dot=document.createElement('div');
+  dot.className='asgn-dot';dot.style.background=color;
+
+  var lbl=document.createElement('span');
+  lbl.className='asgn-label';
+  if(dl.done)lbl.style.cssText='text-decoration:line-through;opacity:0.4;flex:1;cursor:text;';
+  else lbl.style.cssText='flex:1;cursor:text;';
+  lbl.textContent=dl.label;
+  lbl.addEventListener('click',function(){startEditLabel(dlId,lbl);});
+
+  var prog=document.createElement('span');
+  prog.className='sub-prog';
+  if(subs.length>0)prog.textContent=subsDone+'/'+subs.length;
+
+  var dates=document.createElement('span');
+  dates.className='asgn-dates';
+  if(dl.done)dates.style.opacity='0.4';
+  dates.textContent=dStr;
+  dates.addEventListener('click',function(){startEditDates(dlId,dates);});
+
+  var badge=document.createElement('span');
+  badge.className='asgn-badge '+badgeCls(days);
+  badge.textContent=badgeTxt(days);
+
+  var subToggle=document.createElement('span');
+  subToggle.className='sub-toggle';
+  subToggle.textContent='\u25b8 subtasks';
+
+  var delBtn=document.createElement('span');
+  delBtn.className='del-asgn';delBtn.textContent='\u2715';
+  delBtn.addEventListener('click',function(){delDl(dlId);});
+
+  mainRow.appendChild(cb);mainRow.appendChild(dot);mainRow.appendChild(lbl);
+  if(subs.length>0)mainRow.appendChild(prog);
+  mainRow.appendChild(dates);mainRow.appendChild(badge);
+  mainRow.appendChild(subToggle);mainRow.appendChild(delBtn);
+
+  var subWrap=document.createElement('div');
+  subWrap.className='sub-wrap';subWrap.style.display='none';
+
+  function refreshSubs(){
+    var list=subtasksMap[dlId]||[];
+    subWrap.innerHTML='';
+    list.forEach(function(s){
+      var sr=document.createElement('div');sr.className='sub-row';
+      var scb=document.createElement('div');scb.className='sub-cb'+(s.done?' done':'');
+      var slbl=document.createElement('span');slbl.className='sub-label'+(s.done?' done':'');slbl.textContent=s.label;slbl.style.cursor='text';
+      slbl.addEventListener('click',function(){
+        var inp=document.createElement('input');inp.type='text';inp.value=s.label;
+        inp.style.cssText='font-size:12px;padding:1px 6px;border-radius:6px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);flex:1;font-family:inherit;height:22px;';
+        slbl.replaceWith(inp);inp.focus();inp.select();
+        function save(){s.label=inp.value.trim()||s.label;refreshSubs();saveSubtasks();}
+        inp.addEventListener('blur',save);
+        inp.addEventListener('keydown',function(e){if(e.key==='Enter')inp.blur();if(e.key==='Escape')refreshSubs();});
+      });
+      scb.addEventListener('click',function(){
+        s.done=!s.done;scb.classList.toggle('done',s.done);slbl.classList.toggle('done',s.done);
+        updateSubProg(dlId,mainRow);saveSubtasks();
+      });
+      var sdel=document.createElement('span');
+      sdel.textContent='\u2715';
+      sdel.style.cssText='font-size:10.5px;color:var(--text3);cursor:pointer;opacity:0;padding:0 2px;transition:opacity .15s;flex-shrink:0;';
+      sr.addEventListener('mouseenter',function(){sdel.style.opacity='0.5';});
+      sr.addEventListener('mouseleave',function(){sdel.style.opacity='0';});
+      sdel.addEventListener('click',function(){
+        var i=list.indexOf(s);if(i>-1)list.splice(i,1);
+        refreshSubs();updateSubProg(dlId,mainRow);saveSubtasks();
+      });
+      sr.appendChild(scb);sr.appendChild(slbl);sr.appendChild(sdel);
+      subWrap.appendChild(sr);
+    });
+    var addR=document.createElement('div');addR.className='add-sub-row';
+    var inp=document.createElement('input');inp.type='text';inp.placeholder='Add subtask...';
+    var btn=document.createElement('button');btn.textContent='+ Add';
+    btn.addEventListener('click',function(){
+      var v=inp.value.trim();if(!v)return;
+      if(!subtasksMap[dlId])subtasksMap[dlId]=[];
+      subtasksMap[dlId].push({label:v,done:false});
+      inp.value='';refreshSubs();updateSubProg(dlId,mainRow);saveSubtasks();
+    });
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter')btn.click();});
+    addR.appendChild(inp);addR.appendChild(btn);subWrap.appendChild(addR);
+  }
+  refreshSubs();
+
+  subToggle.addEventListener('click',function(){
+    var open=subWrap.style.display!=='none';
+    subWrap.style.display=open?'none':'flex';
+    subWrap.style.flexDirection='column';
+    subToggle.textContent=(open?'\u25b8':'\u25be')+' subtasks';
+  });
+
+  wrap.appendChild(mainRow);wrap.appendChild(subWrap);
+  return wrap;
+}
+
+function updateSubProg(dlId,mainRow){
+  var list=subtasksMap[dlId]||[];
+  var done=list.filter(function(s){return s.done;}).length;
+  var pg=mainRow.querySelector('.sub-prog');
+  if(list.length===0){if(pg)pg.remove();}
+  else if(pg){pg.textContent=done+'/'+list.length;}
+  else{var np=document.createElement('span');np.className='sub-prog';np.textContent=done+'/'+list.length;mainRow.querySelector('.asgn-label').after(np);}
 }
 
 function buildDeadlines(){
@@ -346,245 +465,85 @@ function buildDeadlines(){
   var all=getAllDeadlines();
   var active=all.filter(function(d){return !d.done;});
   var done=all.filter(function(d){return d.done;});
-  var subjOrder=['Manufacturing','Comms','Machine Design','Materials Handling'];
-  var subjColors={Manufacturing:'#1D9E75',Comms:'#7BC67E','Machine Design':'#378ADD','Materials Handling':'#D85A30',All:'var(--amber)'};
   var grouped={};
-  active.forEach(function(dl){
-    var s=dl.subj;if(!grouped[s])grouped[s]=[];grouped[s].push(dl);
+  active.forEach(function(dl){if(!grouped[dl.subj])grouped[dl.subj]=[];grouped[dl.subj].push(dl);});
+  SUBJ_ORDER.forEach(function(subj){
+    if(!grouped[subj]||!grouped[subj].length)return;
+    var hdr=document.createElement('div');hdr.className='grp-hdr';
+    hdr.innerHTML='<div style="width:7px;height:7px;border-radius:50%;background:'+SUBJ_DOT[subj]+';flex-shrink:0"></div><span>'+subj+'</span>';
+    list.appendChild(hdr);
+    grouped[subj].forEach(function(dl){list.appendChild(makeDlRow(dl));});
   });
-  subjOrder.forEach(function(subj){
-    if(!grouped[subj]||grouped[subj].length===0)return;
-    var grpHdr=document.createElement('div');
-    grpHdr.style.cssText='display:flex;align-items:center;gap:7px;padding:10px 0 5px;border-bottom:0.5px solid var(--border);';
-    grpHdr.innerHTML='<div style="width:7px;height:7px;border-radius:50%;background:'+subjColors[subj]+';flex-shrink:0"></div>'
-      +'<span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;">'+(subj==='All'?'General':subj)+'</span>';
-    list.appendChild(grpHdr);
-    grouped[subj].forEach(function(dl){list.appendChild(makeRow(dl));});
-  });
-  function makeRow(dl){
-    var refDate=dl.showStart?dl.start:dl.end;
-    var days=refDate?daysUntil(refDate):null;
-    var datesStr=dl.start&&dl.end?fmtDate(dl.start)+' – '+fmtDate(dl.end):dl.end?fmtDate(dl.end):dl.start?fmtDate(dl.start):'TBC';
-    var dc=subjDotCls[dl.subj]||'';
-    var dotHtml=dc?'<div class="asgn-dot '+dc+'"></div>':'<div style="width:9px;height:9px;border-radius:50%;background:var(--amber);flex-shrink:0"></div>';
-    var dlId=dl.id;
-    var subs=subtasksMap[dlId]||[];
-    var subDone=subs.filter(function(s){return s.done;}).length;
-    var cbHtml='<div class="dl-cb'+(dl.done?' dl-cb-done':'')+'" style="width:15px;height:15px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s;'+(dl.done?'background:var(--green);border-color:var(--green);':'')+'">'+
-      (dl.done?'<svg width="9" height="6" viewBox="0 0 9 6" fill="none"><polyline points="1,3 3.5,5.5 8,1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>';
-    var wrap=document.createElement('div');
-    wrap.style.cssText='border-bottom:0.5px solid var(--border);padding-bottom:0;';
-    var mainRow=document.createElement('div');
-    mainRow.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 0;';
-    mainRow.innerHTML=cbHtml+dotHtml
-      +'<span class="asgn-label" style="cursor:text;flex:1;'+(dl.done?'text-decoration:line-through;opacity:0.4;':'')+'" title="Click to edit">'+dl.subj+' — '+dl.label+'</span>'
-      +(subs.length>0?'<span class="sub-prog">'+subDone+'/'+subs.length+'</span>':'')
-      +'<span class="asgn-dates" style="cursor:text;'+(dl.done?'opacity:0.4;':'')+'" title="Click to edit dates">'+datesStr+'</span>'
-      +'<span class="asgn-badge '+badgeCls(days)+'">'+badgeTxt(days)+'</span>'
-      +'<span class="subtasks-toggle">▸ subtasks</span>'
-      +'<span class="del-asgn">✕</span>';
-    mainRow.querySelector('.dl-cb').addEventListener('click',function(){toggleDl(dlId);});
-    mainRow.querySelector('.del-asgn').addEventListener('click',function(){delDl(dlId);});
-    mainRow.querySelector('.asgn-label').addEventListener('click',function(){startEditLabel(dlId,this);});
-    mainRow.querySelector('.asgn-dates').addEventListener('click',function(){startEditDates(dlId,this);});
-    var subWrap=document.createElement('div');
-    subWrap.className='subtasks-wrap';
-    subWrap.style.display='none';
-    function refreshSubtasks(){
-      var subs2=subtasksMap[dlId]||[];
-      subWrap.innerHTML='';
-      subs2.forEach(function(s){
-        var sr=document.createElement('div');sr.className='subtask-row';
-        var cb=document.createElement('div');cb.className='sub-cb'+(s.done?' done':'');
-        var lbl=document.createElement('span');lbl.className='sub-label'+(s.done?' done':'');lbl.textContent=s.label;
-        lbl.style.cursor='text';lbl.title='Click to edit';
-        lbl.addEventListener('click',function(){
-          var inp2=document.createElement('input');
-          inp2.type='text';inp2.value=s.label;
-          inp2.style.cssText='font-size:12px;padding:1px 6px;border-radius:6px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);flex:1;font-family:inherit;height:22px;';
-          lbl.replaceWith(inp2);inp2.focus();inp2.select();
-          function saveEdit(){
-            var v=inp2.value.trim()||s.label;
-            s.label=v;refreshSubtasks();saveSubtasks();
-          }
-          inp2.addEventListener('blur',saveEdit);
-          inp2.addEventListener('keydown',function(e){if(e.key==='Enter')inp2.blur();if(e.key==='Escape'){s.label=s.label;refreshSubtasks();}});
-        });
-        cb.addEventListener('click',function(){
-          s.done=!s.done;
-          cb.classList.toggle('done',s.done);
-          lbl.classList.toggle('done',s.done);
-          var sd2=(subtasksMap[dlId]||[]).filter(function(x){return x.done;}).length;
-          var pg=mainRow.querySelector('.sub-prog');
-          if(pg) pg.textContent=sd2+'/'+subs2.length;
-          else if(subs2.length>0){
-            var np=document.createElement('span');np.className='sub-prog';np.textContent=sd2+'/'+subs2.length;
-            mainRow.querySelector('.asgn-label').after(np);
-          }
-          saveSubtasks();
-        });
-        var delSub=document.createElement('span');
-        delSub.textContent='✕';
-        delSub.style.cssText='font-size:10.5px;color:var(--text3);cursor:pointer;opacity:0;padding:0 2px;transition:opacity .15s;flex-shrink:0;';
-        sr.addEventListener('mouseenter',function(){delSub.style.opacity='0.5';});
-        sr.addEventListener('mouseleave',function(){delSub.style.opacity='0';});
-        delSub.addEventListener('click',function(){
-          var idx2=subtasksMap[dlId].indexOf(s);
-          if(idx2>-1)subtasksMap[dlId].splice(idx2,1);
-          refreshSubtasks();saveSubtasks();
-          var sd2=(subtasksMap[dlId]||[]).filter(function(x){return x.done;}).length;
-          var pg=mainRow.querySelector('.sub-prog');
-          if(subtasksMap[dlId].length===0){if(pg)pg.remove();}
-          else if(pg)pg.textContent=sd2+'/'+subtasksMap[dlId].length;
-        });
-        sr.appendChild(cb);sr.appendChild(lbl);sr.appendChild(delSub);
-        subWrap.appendChild(sr);
-      });
-      var addRow=document.createElement('div');addRow.className='add-sub-row';
-      var inp=document.createElement('input');inp.type='text';inp.placeholder='Add subtask...';
-      var btn=document.createElement('button');btn.textContent='+ Add';
-      btn.addEventListener('click',function(){
-        var v=inp.value.trim();if(!v)return;
-        if(!subtasksMap[dlId])subtasksMap[dlId]=[];
-        subtasksMap[dlId].push({label:v,done:false});
-        inp.value='';refreshSubtasks();saveSubtasks();
-        var sd3=(subtasksMap[dlId]||[]).filter(function(x){return x.done;}).length;
-        var pg=mainRow.querySelector('.sub-prog');
-        if(pg) pg.textContent=sd3+'/'+subtasksMap[dlId].length;
-        else{var np2=document.createElement('span');np2.className='sub-prog';np2.textContent=sd3+'/'+subtasksMap[dlId].length;mainRow.querySelector('.asgn-label').after(np2);}
-      });
-      inp.addEventListener('keydown',function(e){if(e.key==='Enter')btn.click();});
-      addRow.appendChild(inp);addRow.appendChild(btn);
-      subWrap.appendChild(addRow);
-    }
-    refreshSubtasks();
-    mainRow.querySelector('.subtasks-toggle').addEventListener('click',function(){
-      var open=subWrap.style.display!=='none';
-      subWrap.style.display=open?'none':'flex';
-      subWrap.style.flexDirection='column';
-      this.textContent=(open?'▸':'▾')+' subtasks';
-    });
-    wrap.appendChild(mainRow);wrap.appendChild(subWrap);
-    return wrap;
-  }
-  active.forEach(function(dl){list.appendChild(makeRow(dl));});
-  if(done.length>0){
+  if(done.length){
     var sep=document.createElement('div');
     sep.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 0 4px;cursor:pointer;border-top:0.5px solid var(--border);margin-top:6px;';
-    sep.innerHTML='<span style="font-size:11.5px;font-weight:600;color:var(--text3);">Completed ('+done.length+')</span>'
-      +'<span id="compChev" style="font-size:10px;color:var(--text3);">'+(completedOpen?'▾':'▸')+'</span>';
+    sep.innerHTML='<span style="font-size:11.5px;font-weight:600;color:var(--text3);">Completed ('+done.length+')</span><span id="compChev" style="font-size:10px;color:var(--text3);">'+(completedOpen?'\u25be':'\u25b8')+'</span>';
     sep.addEventListener('click',function(){
       completedOpen=!completedOpen;
-      var cw=document.getElementById('completedRows');
-      if(cw)cw.style.display=completedOpen?'block':'none';
-      var ch=document.getElementById('compChev');
-      if(ch)ch.textContent=completedOpen?'▾':'▸';
+      var cw=document.getElementById('completedRows');if(cw)cw.style.display=completedOpen?'block':'none';
+      var ch=document.getElementById('compChev');if(ch)ch.textContent=completedOpen?'\u25be':'\u25b8';
     });
     list.appendChild(sep);
-    var wrap=document.createElement('div');
-    wrap.id='completedRows';
-    wrap.style.display=completedOpen?'block':'none';
-    done.forEach(function(dl){
-      var row=makeRow(dl);
-      row.style.opacity='0.38';
-      wrap.appendChild(row);
-    });
-    list.appendChild(wrap);
+    var cWrap=document.createElement('div');cWrap.id='completedRows';cWrap.style.display=completedOpen?'block':'none';
+    done.forEach(function(dl){var r=makeDlRow(dl);r.style.opacity='0.38';cWrap.appendChild(r);});
+    list.appendChild(cWrap);
   }
 }
 
 function toggleDl(id){
-  var all=getAllDeadlines();
-  var dl=all.find(function(d){return d.id===id;});
+  var dl=getAllDeadlines().find(function(d){return d.id===id;});
   if(!dl)return;
   dl.done=!dl.done;
-  buildDeadlines();
-  buildGantt();
-  saveDlState();
+  buildDeadlines();buildGantt();saveDlState();
 }
 
 function delDl(id){
   var base=BASE_DEADLINES.find(function(d){return d.id===id;});
-  if(base){base.deleted=true;}
+  if(base)base.deleted=true;
   else{var ud=userDeadlines.find(function(d){return d.id===id;});if(ud)ud.deleted=true;}
-  buildDeadlines();
-  buildGantt();
-  saveDlState();
-}
-
-function saveSubtasks(){
-  try{localStorage.setItem('uni_subtasks_v1',JSON.stringify(subtasksMap));}catch(e){}
-  fetch('https://uni-tracker-f035f-default-rtdb.asia-southeast1.firebasedatabase.app/5f3bbc683d2bfb14/subtasks.json',{
-    method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(subtasksMap)
-  }).catch(function(){});
-}
-function loadSubtasks(data){
-  if(!data)return;
-  Object.keys(data).forEach(function(k){subtasksMap[k]=data[k];});
-}
-function findDl(id){
-  return BASE_DEADLINES.find(function(d){return d.id===id;})
-    ||userDeadlines.find(function(d){return d.id===id;});
+  buildDeadlines();buildGantt();saveDlState();
 }
 
 function startEditLabel(id,el){
-  var dl=findDl(id);if(!dl)return;
-  var input=document.createElement('input');
-  input.type='text';
-  input.value=dl.label;
-  input.style.cssText='font-size:12px;padding:2px 6px;border-radius:6px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);width:160px;font-family:inherit;';
-  el.replaceWith(input);
-  input.focus();
-  function save(){
-    var newLabel=input.value.trim()||dl.label;
-    dl.label=newLabel;
-    buildDeadlines();buildGantt();saveDlState();
-  }
-  input.addEventListener('blur',save);
-  input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape'){dl.label=dl.label;buildDeadlines();}});
+  var dl=BASE_DEADLINES.find(function(d){return d.id===id;})||userDeadlines.find(function(d){return d.id===id;});
+  if(!dl)return;
+  var inp=document.createElement('input');inp.type='text';inp.value=dl.label;
+  inp.style.cssText='font-size:12px;padding:2px 6px;border-radius:6px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);width:160px;font-family:inherit;';
+  el.replaceWith(inp);inp.focus();
+  function save(){dl.label=inp.value.trim()||dl.label;buildDeadlines();buildGantt();saveDlState();}
+  inp.addEventListener('blur',save);
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter')inp.blur();if(e.key==='Escape')buildDeadlines();});
 }
 
 function startEditDates(id,el){
-  var dl=findDl(id);if(!dl)return;
-  var wrap=document.createElement('span');
-  wrap.style.cssText='display:flex;align-items:center;gap:4px;';
-  var iStart=document.createElement('input');iStart.type='date';
-  var iEnd=document.createElement('input');iEnd.type='date';
-  iStart.style.cssText=iEnd.style.cssText='font-size:11px;padding:2px 5px;border-radius:6px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);width:120px;font-family:inherit;';
-  if(dl.start)iStart.value=dl.start.toISOString().slice(0,10);
-  if(dl.end)iEnd.value=dl.end.toISOString().slice(0,10);
-  var sep=document.createElement('span');sep.textContent='–';sep.style.color='var(--text3)';
-  wrap.appendChild(iStart);wrap.appendChild(sep);wrap.appendChild(iEnd);
+  var dl=BASE_DEADLINES.find(function(d){return d.id===id;})||userDeadlines.find(function(d){return d.id===id;});
+  if(!dl)return;
+  var wrap=document.createElement('span');wrap.style.cssText='display:flex;align-items:center;gap:4px;';
+  var iS=document.createElement('input');iS.type='date';
+  var iE=document.createElement('input');iE.type='date';
+  iS.style.cssText=iE.style.cssText='font-size:11px;padding:2px 5px;border-radius:6px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);width:120px;font-family:inherit;';
+  if(dl.start)iS.value=dl.start.toISOString().slice(0,10);
+  if(dl.end)iE.value=dl.end.toISOString().slice(0,10);
+  var sep=document.createElement('span');sep.textContent='\u2013';sep.style.color='var(--text3)';
+  wrap.appendChild(iS);wrap.appendChild(sep);wrap.appendChild(iE);
   el.replaceWith(wrap);
-  function save(){
-    if(iStart.value)dl.start=new Date(iStart.value);
-    if(iEnd.value)dl.end=new Date(iEnd.value);
-    buildDeadlines();buildGantt();saveDlState();
-  }
-  iEnd.addEventListener('blur',function(){setTimeout(save,100);});
-  iStart.addEventListener('blur',function(){if(document.activeElement!==iEnd)setTimeout(save,100);});
-  iStart.addEventListener('keydown',function(e){if(e.key==='Enter')iEnd.focus();});
-  iEnd.addEventListener('keydown',function(e){if(e.key==='Enter')iEnd.blur();});
+  function save(){if(iS.value)dl.start=new Date(iS.value);if(iE.value)dl.end=new Date(iE.value);buildDeadlines();buildGantt();saveDlState();}
+  iE.addEventListener('blur',function(){setTimeout(save,100);});
+  iS.addEventListener('blur',function(){if(document.activeElement!==iE)setTimeout(save,100);});
+  iS.addEventListener('keydown',function(e){if(e.key==='Enter')iE.focus();});
+  iE.addEventListener('keydown',function(e){if(e.key==='Enter')iE.blur();});
 }
 
-function toggleAddDl(){
-  var f=document.getElementById('addDlForm');
-  f.style.display=f.style.display==='none'?'flex':'none';
-}
+function toggleAddDl(){var f=document.getElementById('addDlForm');f.style.display=f.style.display==='none'?'flex':'none';}
 
 function addDlFromForm(){
   var subj=document.getElementById('dlSubj').value;
   var label=document.getElementById('dlLabel').value.trim();
-  var startVal=document.getElementById('dlStart').value;
-  var endVal=document.getElementById('dlEnd').value;
+  var sV=document.getElementById('dlStart').value;
+  var eV=document.getElementById('dlEnd').value;
   if(!label)return;
-  var startDate=startVal?new Date(startVal):null;
-  var endDate=endVal?new Date(endVal):null;
-  var dl={id:'udl-'+Date.now(),subj:subj,label:label,start:startDate,end:endDate,done:false};
-  userDeadlines.push(dl);
-  buildDeadlines();
-  buildGantt();
-  saveDlState();
+  userDeadlines.push({id:'udl-'+Date.now(),subj:subj,label:label,start:sV?new Date(sV):null,end:eV?new Date(eV):null,done:false,deleted:false});
+  buildDeadlines();buildGantt();saveDlState();
   document.getElementById('dlLabel').value='';
   document.getElementById('dlStart').value='';
   document.getElementById('dlEnd').value='';
@@ -592,79 +551,52 @@ function addDlFromForm(){
 }
 
 function saveDlState(){
-  clearTimeout(dlSaveDebounce);
-  dlSaveDebounce=setTimeout(function(){
-    var state={user:userDeadlines.map(function(dl){
-      return {id:dl.id,subj:dl.subj,label:dl.label,
-        start:dl.start?dl.start.toISOString():null,
-        end:dl.end?dl.end.toISOString():null,done:dl.done,deleted:dl.deleted||false};
-    }),baseDone:{},baseDeleted:{}};
-    BASE_DEADLINES.forEach(function(d){state.baseDone[d.id]=d.done;state.baseDeleted[d.id]=d.deleted||false;});
+  clearTimeout(dlDebounce);
+  dlDebounce=setTimeout(function(){
+    var state={
+      user:userDeadlines.map(function(dl){return {id:dl.id,subj:dl.subj,label:dl.label,start:dl.start?dl.start.toISOString():null,end:dl.end?dl.end.toISOString():null,done:dl.done,deleted:!!dl.deleted};}),
+      baseDone:{},baseDeleted:{}
+    };
+    BASE_DEADLINES.forEach(function(d){state.baseDone[d.id]=d.done;state.baseDeleted[d.id]=!!d.deleted;});
     try{localStorage.setItem('uni_dl_v1',JSON.stringify(state));}catch(e){}
-    fetch(DB_DL_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(state)})
-    .catch(function(){});
+    fetch(DB_DL_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(state)}).catch(function(){});
   },600);
 }
 
-var VALID_SUBJS=['Manufacturing','Comms','Machine Design','Materials Handling','All'];
 function loadDlState(state){
   if(!state)return;
-  // Only apply baseDone/Deleted for IDs that exist in current BASE_DEADLINES
-  var validIds=BASE_DEADLINES.map(function(d){return d.id;});
-  if(state.baseDone) BASE_DEADLINES.forEach(function(d){if(state.baseDone[d.id]!==undefined)d.done=state.baseDone[d.id];});
-  if(state.baseDeleted) BASE_DEADLINES.forEach(function(d){if(state.baseDeleted[d.id])d.deleted=true;});
-  // Only load user deadlines with valid current-sem subjects
-  if(state.user) userDeadlines=state.user.filter(function(d){
-    return VALID_SUBJS.indexOf(d.subj)>-1;
-  }).map(function(d){
-    return {id:d.id,subj:d.subj,label:d.label,
-      start:d.start?new Date(d.start):null,
-      end:d.end?new Date(d.end):null,done:d.done,deleted:d.deleted||false};
+  if(state.baseDone)BASE_DEADLINES.forEach(function(d){if(state.baseDone[d.id]!==undefined)d.done=state.baseDone[d.id];});
+  if(state.baseDeleted)BASE_DEADLINES.forEach(function(d){if(state.baseDeleted[d.id])d.deleted=true;});
+  if(state.user)userDeadlines=state.user.filter(function(d){return SUBJECTS.indexOf(d.subj)>-1;}).map(function(d){
+    return {id:d.id,subj:d.subj,label:d.label,start:d.start?new Date(d.start):null,end:d.end?new Date(d.end):null,done:d.done,deleted:!!d.deleted};
   });
 }
 
-var months=[
-  {lbl:'Jul',d:new Date(2026,6,1)},{lbl:'Aug',d:new Date(2026,7,1)},
-  {lbl:'Sep',d:new Date(2026,8,1)},{lbl:'Oct',d:new Date(2026,9,1)},
-  {lbl:'Nov',d:new Date(2026,10,1)},
-];
+function saveSubtasks(){
+  try{localStorage.setItem('uni_subtasks_v1',JSON.stringify(subtasksMap));}catch(e){}
+  fetch(DB_ST_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(subtasksMap)}).catch(function(){});
+}
 
-var _gTip=null;
-function showGTip(e,label){
-  var t=document.getElementById('gTooltip');
-  if(!t)return;
-  t.textContent=label;
-  t.style.opacity='1';
-  moveGTip(e);
-}
-function moveGTip(e){
-  var t=document.getElementById('gTooltip');
-  if(!t)return;
-  t.style.left=(e.clientX+12)+'px';
-  t.style.top=(e.clientY-28)+'px';
-}
-function hideGTip(){
-  var t=document.getElementById('gTooltip');
-  if(t)t.style.opacity='0';
-}
+function loadSubtasks(data){if(!data)return;Object.keys(data).forEach(function(k){subtasksMap[k]=data[k];});}
+
 function buildGantt(){
   var g=document.getElementById('gantt');g.innerHTML='';
   var now=new Date();now.setHours(0,0,0,0);
-  var todayPct=pct(now);
+  var tp=pct(now);
   var mRow=document.createElement('div');mRow.className='gantt-month-row';
-  months.forEach(function(m){
+  MONTHS.forEach(function(m){
     var lbl=document.createElement('div');lbl.className='gantt-month-lbl';
-    lbl.style.left='calc(64px + 8px + (100% - 72px)*'+(pct(m.d)/100)+')';lbl.textContent=m.lbl;
+    lbl.style.left='calc(64px + 8px + (100% - 72px)*'+pct(m.d)/100+')';lbl.textContent=m.lbl;
     mRow.appendChild(lbl);
   });
   g.appendChild(mRow);
   var wrap=document.createElement('div');wrap.className='gantt-rows-wrap';
-  months.forEach(function(m){
+  MONTHS.forEach(function(m){
     var line=document.createElement('div');line.className='gantt-grid-line';
-    line.style.left='calc(64px + 8px + (100% - 72px)*'+(pct(m.d)/100)+')';
+    line.style.left='calc(64px + 8px + (100% - 72px)*'+pct(m.d)/100+')';
     wrap.appendChild(line);
   });
-  var allRows=BASE_GANTT.map(function(r){
+  var rows=BASE_GANTT.map(function(r){
     return {lbl:r.lbl,bars:r.bars.filter(function(b){
       if(!b.dlId)return true;
       var dl=BASE_DEADLINES.find(function(d){return d.id===b.dlId;});
@@ -672,141 +604,97 @@ function buildGantt(){
     })};
   });
   userDeadlines.filter(function(d){return !d.deleted&&!d.done&&(d.start||d.end);}).forEach(function(dl){
-    var s=dl.start||(dl.end?new Date(dl.end.getTime()-14*86400000):null);
-    var e=dl.end||new Date(s.getTime()+14*86400000);
-    var rowLbl=dl.subj==='All'?'General':dl.subj;
-    var existing=allRows.find(function(r){return r.lbl===rowLbl;});
-    var bar={cls:subjBarCls[dl.subj]||'g-gen2',s:s,e:e,txt:dl.label};
+    var s=dl.start||(new Date(dl.end-1209600000));
+    var e=dl.end||(new Date(+dl.start+1209600000));
+    var existing=rows.find(function(r){return r.lbl===dl.subj;});
+    var bar={cls:SUBJ_BAR[dl.subj]||'g-gen2',s:s,e:e,txt:dl.label};
     if(existing)existing.bars.push(bar);
-    else allRows.push({lbl:rowLbl,bars:[bar]});
+    else rows.push({lbl:dl.subj,bars:[bar]});
   });
-  allRows.forEach(function(r){
+  rows.forEach(function(r){
     var row=document.createElement('div');row.className='gantt-row';
-    row.style.alignItems='flex-start';
-    var lbl=document.createElement('div');lbl.className='gantt-lbl';lbl.style.paddingTop='3px';lbl.textContent=r.lbl;
+    var lbl=document.createElement('div');lbl.className='gantt-lbl';lbl.textContent=r.lbl;
     var track=document.createElement('div');track.className='gantt-track';
     var lanes=[];
     r.bars.forEach(function(b){
       var l=pct(b.s),w=pct(b.e)-l;
-      var laneIdx=0;
-      for(var li=0;li<lanes.length;li++){
-        if(lanes[li]<=l){laneIdx=li;break;}
-        if(li===lanes.length-1)laneIdx=lanes.length;
-      }
-      if(laneIdx>=lanes.length)lanes.push(0);
-      lanes[laneIdx]=l+Math.max(0.5,w);
-      var bar=document.createElement('div');
-      bar.className='gantt-bar '+b.cls;
-      bar.style.left=l+'%';
-      bar.style.width=Math.max(0.5,w)+'%';
-      bar.style.top=(3+laneIdx*22)+'px';
+      var li=0;
+      for(var i=0;i<lanes.length;i++){if(lanes[i]<=l){li=i;break;}if(i===lanes.length-1)li=lanes.length;}
+      if(li>=lanes.length)lanes.push(0);
+      lanes[li]=l+Math.max(0.5,w);
+      var bar=document.createElement('div');bar.className='gantt-bar '+b.cls;
+      bar.style.left=l+'%';bar.style.top=(3+li*22)+'px';
       if(w>8){
-        bar.textContent=b.txt;
-      } else {
-        bar.style.borderRadius='50%';bar.style.width='16px';bar.style.height='16px';bar.style.top=(3+laneIdx*22+1)+'px';bar.style.padding='0';
-        (function(label){
-          bar.addEventListener('mouseenter',function(e){showGTip(e,label);});
-          bar.addEventListener('mousemove',function(e){moveGTip(e);});
-          bar.addEventListener('mouseleave',function(){hideGTip();});
+        bar.style.width=Math.max(0.5,w)+'%';bar.textContent=b.txt;
+      }else{
+        bar.style.width='16px';bar.style.height='16px';bar.style.borderRadius='50%';bar.style.padding='0';bar.style.top=(4+li*22)+'px';
+        (function(txt){
+          bar.addEventListener('mouseenter',function(e){var t=document.getElementById('gTooltip');if(t){t.textContent=txt;t.style.opacity='1';t.style.left=(e.clientX+12)+'px';t.style.top=(e.clientY-28)+'px';}});
+          bar.addEventListener('mousemove',function(e){var t=document.getElementById('gTooltip');if(t){t.style.left=(e.clientX+12)+'px';t.style.top=(e.clientY-28)+'px';}});
+          bar.addEventListener('mouseleave',function(){var t=document.getElementById('gTooltip');if(t)t.style.opacity='0';});
         })(b.txt);
       }
       track.appendChild(bar);
     });
-    var trackH=Math.max(24,lanes.length*22+6);
-    track.style.height=trackH+'px';
-    var tl=document.createElement('div');tl.className='gantt-today-line';tl.style.left=todayPct+'%';
-    track.appendChild(tl);
-    row.appendChild(lbl);row.appendChild(track);
-    wrap.appendChild(row);
+    track.style.height=Math.max(24,lanes.length*22+6)+'px';
+    var tl=document.createElement('div');tl.className='gantt-today-line';tl.style.left=tp+'%';track.appendChild(tl);
+    row.appendChild(lbl);row.appendChild(track);wrap.appendChild(row);
   });
   g.appendChild(wrap);
   var tlRow=document.createElement('div');tlRow.className='gantt-today-row';
   var tlLbl=document.createElement('div');tlLbl.className='gantt-today-lbl';
-  tlLbl.style.left='calc(64px + 8px + (100% - 72px)*'+(todayPct/100)+')';
+  tlLbl.style.left='calc(64px + 8px + (100% - 72px)*'+tp/100+')';
   tlLbl.textContent='today \u2014 '+fmtDate(now);
-  tlRow.appendChild(tlLbl);
-  g.appendChild(tlRow);
+  tlRow.appendChild(tlLbl);g.appendChild(tlRow);
 }
 
 function showInd(msg,isErr){
-  var el=document.getElementById('saveInd');
-  el.textContent=msg;el.className='save-ind'+(isErr?' error':'');
-  el.style.opacity='1';clearTimeout(saveTimer);
-  saveTimer=setTimeout(function(){el.style.opacity='0';},isErr?3000:1500);
+  var el=document.getElementById('saveInd');el.textContent=msg;el.className='save-ind'+(isErr?' err':'');el.style.opacity='1';
+  clearTimeout(saveTimer);saveTimer=setTimeout(function(){el.style.opacity='0';},isErr?3000:1500);
 }
+
 function getState(){
   var s={tasks:{},deleted:{}};
   Object.keys(pillMap).forEach(function(id){if(pillMap[id].key)s.tasks[pillMap[id].key]=pillMap[id].done;});
   deletedKeys.forEach(function(k){s.deleted[k]=true;});
   return s;
 }
+
 function applyState(s){
   if(!s)return;
-  var tasks=s.tasks||s;
-  var deleted=s.deleted||{};
+  var tasks=s.tasks||s,deleted=s.deleted||{};
   Object.keys(deleted).forEach(function(k){deletedKeys.add(k);});
   Object.keys(pillMap).forEach(function(id){
-    var k=pillMap[id].key;
-    if(!k)return;
+    var k=pillMap[id].key;if(!k)return;
     if(deleted[k]){
-      var el2=document.getElementById(id);if(el2)el2.remove();
+      var el=document.getElementById(id);if(el)el.remove();
       cardPills[pillMap[id].cardId]=(cardPills[pillMap[id].cardId]||[]).filter(function(p){return p!==id;});
       delete pillMap[id];
-    } else if(tasks[k]!==undefined){
+    }else if(tasks[k]!==undefined){
       pillMap[id].done=!!tasks[k];var el=document.getElementById(id);if(el)el.classList.toggle('done',!!tasks[k]);
     }
   });
-  Object.keys(cardPills).forEach(function(cid){updateCardProg(cid);});
+  Object.keys(cardPills).forEach(updateCardProg);
   updateProgDisplay();
 }
-function dbLoad(cb){
-  fetch(DB_URL).then(function(r){return r.json();}).then(function(d){cb(d||{});}).catch(function(){cb(null);});
-}
-function dbLoadDl(cb){
-  fetch(DB_DL_URL).then(function(r){return r.json();}).then(function(d){cb(d);}).catch(function(){cb(null);});
-}
+
 function dbSave(){
   clearTimeout(saveDebounce);
   saveDebounce=setTimeout(function(){
     var state=getState();
     try{localStorage.setItem('uni_tracker_v1',JSON.stringify(state));}catch(e){}
     fetch(DB_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(state)})
-    .then(function(r){if(r.ok)showInd('Saved \u2713');else showInd('Save failed',true);})
+    .then(function(r){showInd(r.ok?'Saved \u2713':'Save failed',!r.ok);})
     .catch(function(){showInd('Offline \u2014 saved locally',true);});
   },600);
 }
 
-function getTasks(wk,subj){
-  var t=[];
-  if(subj==='Manufacturing'){
-    t.push({type:'lec',label:'Lecture',due:''});
-    if(wk>=2) t.push({type:'lab',label:'Lab',due:''});
-    if(wk===7||wk===12) t.push({type:'tut',label:'Tutorial',due:''});
-  }
-  if(subj==='Comms'){
-    t.push({type:'wksh',label:'Seminar',due:''});
-    t.push({type:'tut',label:'Tutorial',due:''});
-  }
-  if(subj==='Machine Design'){
-    t.push({type:'lec',label:'Lecture',due:''});
-    // Tutorial fortnightly from wk1: wk1,3,5,7,9,11,13
-    if(wk%2===1) t.push({type:'tut',label:'Tutorial',due:''});
-  }
-  if(subj==='Materials Handling'){
-    t.push({type:'lec',label:'Lecture',due:''});
-    if(wk>=2) t.push({type:'tut',label:'Tutorial',due:''});
-  }
-  return t;
-}
-
-function makePillEl(task,cardId,stableKey){
-  var id='p'+(++idCounter),cls=pillCls[task.type]||'p-lec';
-  var dueHtml=task.due?'<span class="due">'+task.due+'</span>':'';
-  var el=document.createElement('span');
-  el.className='pill '+cls;el.id=id;
-  el.innerHTML=task.label+dueHtml+'<span class="del-pill" onclick="delPill(event,\''+id+'\')">&#10005;</span>';
+function makePillEl(task,cardId,key){
+  var id='p'+(++idCounter),el=document.createElement('span');
+  el.className='pill '+(PILL_CLS[task.type]||'p-lec');el.id=id;
+  el.innerHTML=task.label+(task.due?'<span class="due">'+task.due+'</span>':'')+'<span class="del-pill" onclick="delPill(event,\''+id+'\')">&#10005;</span>';
   el.addEventListener('click',function(e){if(!e.target.classList.contains('del-pill'))tickPill(id);});
-  pillMap[id]={done:false,cardId:cardId,key:stableKey};
+  pillMap[id]={done:false,cardId:cardId,key:key};
   if(!cardPills[cardId])cardPills[cardId]=[];
   cardPills[cardId].push(id);
   return el;
@@ -815,31 +703,28 @@ function makePillEl(task,cardId,stableKey){
 function buildCard(wk){
   var cardId='card-wk'+wk;
   var status=wk<currentWeek?'behind':wk===currentWeek?'current':'upcoming';
-  cardPills[cardId]=[];var dWk=displayWk(wk);
+  cardPills[cardId]=[];
   var card=document.createElement('div');
   card.className='week-card '+status;
   card.id=cardId;card.setAttribute('data-status',status);card.setAttribute('data-wk',wk);
   var head=document.createElement('div');head.className='card-head';
-  var weekCb=document.createElement('div');weekCb.className='week-cb';weekCb.id='wcb-'+cardId;
-  weekCb.addEventListener('click',function(e){e.stopPropagation();tickWeek(cardId);});
-  var headInner=document.createElement('span');
-  headInner.style.cssText='display:flex;align-items:center;gap:9px;flex:1;min-width:0;';
-  headInner.innerHTML='<span class="wk-num">Week '+dWk+'</span><span class="wk-dates">'+getWeekLabel(wk)+'</span><span class="card-prog" id="cprog-'+cardId+'"></span>';
-  headInner.addEventListener('click',function(){card.classList.toggle('collapsed');});
-  var chev=document.createElement('div');chev.className='chevron';chev.innerHTML=chevSvg;
+  var wcb=document.createElement('div');wcb.className='week-cb';wcb.id='wcb-'+cardId;
+  wcb.addEventListener('click',function(e){e.stopPropagation();tickWeek(cardId);});
+  var hi=document.createElement('span');
+  hi.style.cssText='display:flex;align-items:center;gap:9px;flex:1;min-width:0;';
+  hi.innerHTML='<span class="wk-num">Week '+wk+'</span><span class="wk-dates">'+getWeekLabel(wk)+'</span><span class="card-prog" id="cprog-'+cardId+'"></span>';
+  hi.addEventListener('click',function(){card.classList.toggle('collapsed');});
+  var chev=document.createElement('div');chev.className='chev';chev.innerHTML=CHEV;
   chev.addEventListener('click',function(){card.classList.toggle('collapsed');});
-  head.appendChild(weekCb);head.appendChild(headInner);head.appendChild(chev);card.appendChild(head);
+  head.appendChild(wcb);head.appendChild(hi);head.appendChild(chev);card.appendChild(head);
   var body=document.createElement('div');body.className='card-body';
-  subjects.forEach(function(subj){
+  SUBJECTS.forEach(function(subj){
     var key=wk+'-'+subj;
     var row=document.createElement('div');row.className='subj-row';row.setAttribute('data-subj',subj);
-    row.innerHTML='<div class="subj-dot '+dotCssClass(subj)+'" style="flex-shrink:0"></div><span class="subj-name">'+subj+'</span>';
-    var pillsDiv=document.createElement('div');pillsDiv.className='pills';pillsDiv.id='pills-'+key;
-    getTasks(wk,subj).forEach(function(task){
-      var sk=key+'-'+task.type+'-'+task.label.replace(/\s/g,'_');
-      pillsDiv.appendChild(makePillEl(task,cardId,sk));
-    });
-    row.appendChild(pillsDiv);body.appendChild(row);
+    row.innerHTML='<div class="sdot '+dotCls(subj)+'" style="flex-shrink:0"></div><span class="subj-name">'+subj+'</span>';
+    var pDiv=document.createElement('div');pDiv.className='pills';pDiv.id='pills-'+key;
+    getTasks(wk,subj).forEach(function(t){pDiv.appendChild(makePillEl(t,cardId,key+'-'+t.type+'-'+t.label.replace(/\s/g,'_')));});
+    row.appendChild(pDiv);body.appendChild(row);
     var addRow=document.createElement('div');addRow.className='add-row';
     addRow.innerHTML='<span class="add-lbl">'+subj+':</span>'
       +'<select id="sel-type-'+key+'"><option value="lec">Lecture</option><option value="tut">Tutorial</option><option value="lab">Lab</option><option value="wksh">Workshop</option><option value="asgn">Assignment</option></select>'
@@ -856,26 +741,26 @@ function buildExamCard(){
   var card=document.createElement('div');
   card.className='week-card exam-card collapsed';card.id=cardId;card.setAttribute('data-status','exam');
   var head=document.createElement('div');head.className='card-head';
-  var weekCb=document.createElement('div');weekCb.className='week-cb';weekCb.id='wcb-'+cardId;
-  weekCb.addEventListener('click',function(e){e.stopPropagation();tickWeek(cardId);});
-  var headInner=document.createElement('span');
-  headInner.style.cssText='display:flex;align-items:center;gap:9px;flex:1;';
-  headInner.innerHTML='<span class="wk-num">Exam period</span><span class="wk-dates">2 Nov – 13 Nov</span><span class="card-prog" id="cprog-'+cardId+'"></span>';
-  headInner.addEventListener('click',function(){card.classList.toggle('collapsed');});
-  var chev=document.createElement('div');chev.className='chevron';chev.innerHTML=chevSvg;
+  var wcb=document.createElement('div');wcb.className='week-cb';wcb.id='wcb-'+cardId;
+  wcb.addEventListener('click',function(e){e.stopPropagation();tickWeek(cardId);});
+  var hi=document.createElement('span');
+  hi.style.cssText='display:flex;align-items:center;gap:9px;flex:1;';
+  hi.innerHTML='<span class="wk-num">Exam period</span><span class="wk-dates">2 Nov \u2013 13 Nov</span><span class="card-prog" id="cprog-'+cardId+'"></span>';
+  hi.addEventListener('click',function(){card.classList.toggle('collapsed');});
+  var chev=document.createElement('div');chev.className='chev';chev.innerHTML=CHEV;
   chev.addEventListener('click',function(){card.classList.toggle('collapsed');});
-  head.appendChild(weekCb);head.appendChild(headInner);head.appendChild(chev);card.appendChild(head);
+  head.appendChild(wcb);head.appendChild(hi);head.appendChild(chev);card.appendChild(head);
   var body=document.createElement('div');body.className='card-body';
-  subjects.forEach(function(subj){
+  var examDlMap={Manufacturing:'dl-mfg-exam',Comms:null,'Machine Design':'dl-md-exam','Materials Handling':'dl-mh-exam'};
+  SUBJECTS.forEach(function(subj){
     var row=document.createElement('div');row.className='subj-row';row.setAttribute('data-subj',subj);
-    row.innerHTML='<div class="subj-dot '+dotCssClass(subj)+'" style="flex-shrink:0"></div><span class="subj-name">'+subj+'</span>';
-    var pillsDiv=document.createElement('div');pillsDiv.className='pills';pillsDiv.id='pills-exam-'+subj;
-    var examDlId={Manufacturing:'dl-mfg-exam','Comms':null,'Machine Design':'dl-md-exam','Materials Handling':'dl-mh-exam'}[subj];
-    var examDays=null;
-    if(examDlId){var eDl=BASE_DEADLINES.find(function(d){return d.id===examDlId;});if(eDl&&eDl.start)examDays=daysUntil(eDl.start);}
-    var examDue=examDays!==null?(examDays+'d left'):'TBC';
-    pillsDiv.appendChild(makePillEl({type:'exam',label:'Final exam',due:examDue},cardId,'exam-'+subj+'-final'));
-    row.appendChild(pillsDiv);body.appendChild(row);
+    row.innerHTML='<div class="sdot '+dotCls(subj)+'" style="flex-shrink:0"></div><span class="subj-name">'+subj+'</span>';
+    var pDiv=document.createElement('div');pDiv.className='pills';pDiv.id='pills-exam-'+subj;
+    var dlId=examDlMap[subj];
+    var due='TBC';
+    if(dlId){var dl=BASE_DEADLINES.find(function(d){return d.id===dlId;});if(dl&&dl.start){var d2=daysUntil(dl.start);due=d2+'d';}}
+    pDiv.appendChild(makePillEl({type:'exam',label:'Final exam',due:due},cardId,'exam-'+subj+'-final'));
+    row.appendChild(pDiv);body.appendChild(row);
     var addRow=document.createElement('div');addRow.className='add-row';
     addRow.innerHTML='<span class="add-lbl">'+subj+':</span>'
       +'<select id="sel-type-exam-'+subj+'"><option value="exam">Exam</option><option value="asgn">Assignment</option></select>'
@@ -888,50 +773,37 @@ function buildExamCard(){
 }
 
 var container=document.getElementById('cards');
-for(var wk=1;wk<=13;wk++){
-  container.appendChild(buildCard(wk));
-  if(wk===4){
-    var br=document.createElement('div');
-    br.className='break-divider';br.id='break-divider';
-    br.textContent='Study break: 17 Aug – 23 Aug';
-    container.appendChild(br);
-  }
-  if(wk===10){
-    var br2=document.createElement('div');
-    br2.className='break-divider';br2.id='break-divider2';
-    br2.textContent='Study break: 28 Sep – 4 Oct';
-    container.appendChild(br2);
+for(var wk=1;wk<=15;wk++){
+  if(wk===5){
+    var d1=document.createElement('div');d1.className='break-div';d1.id='break-divider';
+    d1.textContent='Wk 5 — Study break: 17 Aug – 23 Aug';container.appendChild(d1);
+  } else if(wk===11){
+    var d2=document.createElement('div');d2.className='break-div';d2.id='break-divider2';
+    d2.textContent='Wk 11 — Study break: 28 Sep – 4 Oct';container.appendChild(d2);
+  } else if(wk===15){
+    var d3=document.createElement('div');d3.className='break-div';d3.id='break-divider3';
+    d3.textContent='Wk 15 — Tuition-free: 26 Oct – 1 Nov';container.appendChild(d3);
+  } else {
+    container.appendChild(buildCard(wk));
   }
 }
 container.appendChild(buildExamCard());
-updateProgDisplay();
-buildGantt();
-buildDeadlines();
+updateProgDisplay();buildGantt();buildDeadlines();
 
 Promise.all([
   fetch(DB_URL).then(function(r){return r.json();}).catch(function(){return null;}),
   fetch(DB_DL_URL).then(function(r){return r.json();}).catch(function(){return null;}),
-  fetch('https://uni-tracker-f035f-default-rtdb.asia-southeast1.firebasedatabase.app/5f3bbc683d2bfb14/subtasks.json').then(function(r){return r.json();}).catch(function(){return null;})
-]).then(function(results){
-  var taskState=results[0];
-  var dlState=results[1];
-  var subState=results[2];
-  if(!taskState){
-    try{var r=localStorage.getItem('uni_tracker_v1');if(r)taskState=JSON.parse(r);}catch(e){}
-  }
-  if(!dlState){
-    try{var r2=localStorage.getItem('uni_dl_v1');if(r2)dlState=JSON.parse(r2);}catch(e){}
-  }
-  if(!subState){
-    try{var r3=localStorage.getItem('uni_subtasks_v1');if(r3)subState=JSON.parse(r3);}catch(e){}
-  }
-  if(taskState&&Object.keys(taskState).length) applyState(taskState);
-  if(dlState) loadDlState(dlState);
-  if(subState) loadSubtasks(subState);
-  buildDeadlines();
-  buildGantt();
-  var loader=document.getElementById('loader');
-  loader.classList.add('hidden');
+  fetch(DB_ST_URL).then(function(r){return r.json();}).catch(function(){return null;})
+]).then(function(res){
+  var taskState=res[0],dlState=res[1],subState=res[2];
+  if(!taskState)try{var r=localStorage.getItem('uni_tracker_v1');if(r)taskState=JSON.parse(r);}catch(e){}
+  if(!dlState)try{var r=localStorage.getItem('uni_dl_v1');if(r)dlState=JSON.parse(r);}catch(e){}
+  if(!subState)try{var r=localStorage.getItem('uni_subtasks_v1');if(r)subState=JSON.parse(r);}catch(e){}
+  if(taskState&&Object.keys(taskState).length)applyState(taskState);
+  if(dlState)loadDlState(dlState);
+  if(subState)loadSubtasks(subState);
+  buildDeadlines();buildGantt();
+  var loader=document.getElementById('loader');loader.classList.add('hidden');
   setTimeout(function(){loader.style.display='none';},400);
 });
 
@@ -941,8 +813,7 @@ function updateCardProg(cardId){
   var total=pids.length;
   var el=document.getElementById('cprog-'+cardId);if(el)el.textContent=done+' / '+total;
   var wcb=document.getElementById('wcb-'+cardId);if(wcb)wcb.classList.toggle('ticked',total>0&&done===total);
-  var card=document.getElementById(cardId);
-  if(!card)return;
+  var card=document.getElementById(cardId);if(!card)return;
   var wk=parseInt(card.getAttribute('data-wk'));
   var allDone=total>0&&done===total;
   var isUpcoming=card.getAttribute('data-status')==='upcoming';
@@ -951,94 +822,84 @@ function updateCardProg(cardId){
   if(!isNaN(wk)){
     var isBehind=wk<currentWeek&&!allDone;
     card.classList.toggle('behind',isBehind);
-    var headInner=card.querySelector('.card-head span');
-    if(headInner){
-      var existing=headInner.querySelector('.wk-badge');if(existing)existing.remove();
-      if(isBehind){
-        var b=document.createElement('span');b.className='wk-badge badge-behind';b.textContent='behind';
-        var prog=headInner.querySelector('.card-prog');if(prog)headInner.insertBefore(b,prog);
-      } else if(wk===currentWeek&&!allDone){
-        var b2=document.createElement('span');b2.className='wk-badge badge-current';b2.textContent='current';
-        var prog2=headInner.querySelector('.card-prog');if(prog2)headInner.insertBefore(b2,prog2);
-      }
+    var hi=card.querySelector('.card-head span');
+    if(hi){
+      var ex=hi.querySelector('.wk-badge');if(ex)ex.remove();
+      var prog=hi.querySelector('.card-prog');
+      if(isBehind){var b=document.createElement('span');b.className='wk-badge badge-beh';b.textContent='behind';if(prog)hi.insertBefore(b,prog);}
+      else if(wk===currentWeek&&!allDone){var b=document.createElement('span');b.className='wk-badge badge-cur';b.textContent='current';if(prog)hi.insertBefore(b,prog);}
     }
   }
 }
+
 function updateProgDisplay(){
-  var total=Object.keys(pillMap).length;
-  var done=Object.values(pillMap).filter(function(p){return p.done;}).length;
+  var keys=Object.keys(pillMap),total=keys.length;
+  var done=keys.filter(function(id){return pillMap[id].done;}).length;
   document.getElementById('prog').style.width=(total?Math.round(done/total*100):0)+'%';
   document.getElementById('ptxt').textContent=done+' / '+total;
 }
+
 function tickPill(id){
   if(!pillMap[id])return;
   pillMap[id].done=!pillMap[id].done;
   document.getElementById(id).classList.toggle('done',pillMap[id].done);
   updateCardProg(pillMap[id].cardId);updateProgDisplay();dbSave();
 }
+
 function tickWeek(cardId){
   var pids=cardPills[cardId]||[];
   var allDone=pids.every(function(p){return pillMap[p]&&pillMap[p].done;});
-  pids.forEach(function(pid){
-    if(!pillMap[pid])return;
-    pillMap[pid].done=!allDone;
-    document.getElementById(pid).classList.toggle('done',!allDone);
-  });
+  pids.forEach(function(pid){if(!pillMap[pid])return;pillMap[pid].done=!allDone;document.getElementById(pid).classList.toggle('done',!allDone);});
   updateCardProg(cardId);updateProgDisplay();dbSave();
 }
+
 function delPill(e,id){
   e.stopPropagation();if(!pillMap[id])return;
-  var cardId=pillMap[id].cardId;
-  var key=pillMap[id].key;
+  var cardId=pillMap[id].cardId,key=pillMap[id].key;
   if(key)deletedKeys.add(key);
   document.getElementById(id).remove();
   cardPills[cardId]=(cardPills[cardId]||[]).filter(function(p){return p!==id;});
   delete pillMap[id];
   updateCardProg(cardId);updateProgDisplay();dbSave();
 }
-function addTask(key,cardId,pillsDivId){
+
+function addTask(key,cardId,divId){
   var typeEl=document.getElementById('sel-type-'+key);
   var labelEl=document.getElementById('sel-label-'+key);
   var dueEl=document.getElementById('sel-due-'+key);
   if(!typeEl||!labelEl||!labelEl.value.trim())return;
   var label=labelEl.value.trim();
-  var dueDate=dueEl&&dueEl.value?new Date(dueEl.value):null;
-  var dueDisplay=dueDate?fmtDate(dueDate):'';
-  var task={type:typeEl.value,label:label,due:dueDisplay};
-  var sk=key+'-'+task.type+'-'+label.replace(/\s/g,'_')+'-'+Date.now();
-  var div=document.getElementById(pillsDivId);
-  if(div)div.appendChild(makePillEl(task,cardId,sk));
+  var due=dueEl&&dueEl.value?fmtDate(new Date(dueEl.value)):'';
+  var div=document.getElementById(divId);
+  if(div)div.appendChild(makePillEl({type:typeEl.value,label:label,due:due},cardId,key+'-'+typeEl.value+'-'+label.replace(/\s/g,'_')+'-'+Date.now()));
   labelEl.value='';if(dueEl)dueEl.value='';
   updateCardProg(cardId);updateProgDisplay();dbSave();
 }
-var allCollapsed=false;
+
 function toggleCollapseAll(){
   allCollapsed=!allCollapsed;
   document.getElementById('collapseToggle').textContent=allCollapsed?'Expand all':'Collapse all';
   document.querySelectorAll('.week-card').forEach(function(card){
-    var status=card.getAttribute('data-status');
-    if(allCollapsed){
-      card.classList.add('collapsed');
-    } else {
-      // restore defaults: open if current or behind, collapsed if upcoming/done
+    if(allCollapsed){card.classList.add('collapsed');}
+    else{
       var pids=cardPills[card.id]||[];
       var done=pids.filter(function(p){return pillMap[p]&&pillMap[p].done;}).length;
-      var allDone=pids.length>0&&done===pids.length;
-      var isUpcoming=status==='upcoming'||status==='exam';
-      card.classList.toggle('collapsed',allDone||isUpcoming);
+      var isUpcoming=card.getAttribute('data-status')==='upcoming'||card.getAttribute('data-status')==='exam';
+      card.classList.toggle('collapsed',pids.length>0&&done===pids.length||isUpcoming);
     }
   });
 }
+
 function toggleEdit(){
   editMode=!editMode;
   document.getElementById('editToggle').classList.toggle('on',editMode);
   document.getElementById('editToggle').textContent=editMode?'Done editing':'Edit mode';
   document.getElementById('cards').classList.toggle('edit-mode',editMode);
   document.getElementById('dlRows').classList.toggle('edit-mode',editMode);
-  var addDlBtn=document.getElementById('dlAddBtn');
-  if(addDlBtn)addDlBtn.style.display=editMode?'':'none';
+  var btn=document.getElementById('dlAddBtn');if(btn)btn.style.display=editMode?'':'none';
   if(!editMode){var f=document.getElementById('addDlForm');if(f)f.style.display='none';}
 }
+
 function filt(val,btn){
   document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
@@ -1048,28 +909,17 @@ function filt(val,btn){
     if(val==='all'){card.classList.remove('hidden');return;}
     if(val==='behind'){card.classList.toggle('hidden',status!=='behind');return;}
     if(val==='upcoming'){card.classList.toggle('hidden',status!=='upcoming'&&status!=='exam');return;}
-    var hasSubj=false;
-    card.querySelectorAll('.subj-row').forEach(function(r){
-      var match=r.getAttribute('data-subj')===val;
-      r.style.display=match?'':'none';if(match)hasSubj=true;
-    });
-    card.querySelectorAll('.add-row').forEach(function(r){
-      var show=r.innerHTML.indexOf(val)>-1;
-      r.style.display=show?'':'none';
-    });
-    card.classList.toggle('hidden',!hasSubj);
+    var has=false;
+    card.querySelectorAll('.subj-row').forEach(function(r){var m=r.getAttribute('data-subj')===val;r.style.display=m?'':'none';if(m)has=true;});
+    card.querySelectorAll('.add-row').forEach(function(r){r.style.display=r.innerHTML.indexOf(val)>-1?'':'none';});
+    card.classList.toggle('hidden',!has);
   });
-  var bd=document.getElementById('break-divider');
-  if(bd)bd.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
-  var bd2=document.getElementById('break-divider2');
-  if(bd2)bd2.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
+  var bd=document.getElementById('break-divider');if(bd)bd.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
+  var bd2=document.getElementById('break-divider2');if(bd2)bd2.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
+  var bd3=document.getElementById('break-divider3');if(bd3)bd3.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
 }
 
-function registerSW(){
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('SW reg failed:',e);});
-  }
-}
+function registerSW(){if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('SW reg failed:',e);});}
 
 function sendNotif(title,body,tag){
   if(!('serviceWorker' in navigator)||!navigator.serviceWorker.controller)return;
@@ -1080,47 +930,25 @@ function checkDeadlineNotifications(){
   if(!('Notification' in window)||Notification.permission!=='granted')return;
   getAllDeadlines().forEach(function(dl){
     if(dl.done||dl.deleted)return;
-    var refDate=dl.showStart?dl.start:dl.end;
-    if(!refDate)return;
-    var days=daysUntil(refDate);
-    var title,tag;
-    if(days<=0){title='Due today!';tag=dl.id+'-0';}
-    else if(days<=1){title='Due tomorrow!';tag=dl.id+'-1';}
-    else if(days<=3){title='Due in '+days+' days';tag=dl.id+'-3';}
-    else if(days<=7){title='Due in '+days+' days';tag=dl.id+'-7';}
+    var ref=dl.showStart?dl.start:dl.end;if(!ref)return;
+    var days=daysUntil(ref);
+    var title;
+    if(days<=0)title='Due today!';
+    else if(days<=1)title='Due tomorrow!';
+    else if(days<=7)title='Due in '+days+' days';
     else return;
-    var body=dl.subj+' — '+dl.label+(refDate?' ('+fmtDate(refDate)+')':'');
-    sendNotif(title,body,dl.id+'-'+Date.now());
+    sendNotif(title,dl.subj+' \u2014 '+dl.label+(ref?' ('+fmtDate(ref)+')':''),dl.id+'-'+Date.now());
   });
 }
 
 function requestNotifPermission(){
   if(!('Notification' in window))return;
-  if(Notification.permission==='default'){
-    Notification.requestPermission().then(function(p){
-      if(p==='granted') setTimeout(checkDeadlineNotifications,500);
-    });
-  }
+  if(Notification.permission==='default')Notification.requestPermission().then(function(p){if(p==='granted')setTimeout(checkDeadlineNotifications,500);});
 }
 
-function testNotif(){
-  if(!('Notification' in window)){alert('Notifications not supported in this browser.');return;}
-  if(Notification.permission==='denied'){alert('Notifications blocked — go to site settings, allow notifications, then refresh.');return;}
-  if(Notification.permission==='default'){
-    Notification.requestPermission().then(function(p){
-      if(p==='granted'){registerSW();setTimeout(function(){sendNotif('Test','Notifications are working!','test-1');},1000);}
-      else alert('Permission denied.');
-    });
-    return;
-  }
-  sendNotif('Test notification','Notifications are working!','test-1');
-  setTimeout(checkDeadlineNotifications,500);
-}
 registerSW();
 requestNotifPermission();
-setTimeout(function(){
-  if(Notification.permission==='granted') checkDeadlineNotifications();
-}, 3000);
+setTimeout(function(){if(Notification.permission==='granted')checkDeadlineNotifications();},3000);
 </script>
 </body>
 </html>

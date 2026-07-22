@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Uni Semester Tracker</title>
+<title>Uni Semester Tracker — Sem 2 2026</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -70,7 +70,7 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
 .week-card.collapsed .card-body{display:none;}
 .subj-row{display:flex;align-items:center;gap:10px;padding:8px 16px;border-top:0.5px solid var(--border);}
 .subj-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.dot-CAD{background:#378ADD;}.dot-Vibrations{background:#1D9E75;}.dot-Materials{background:#7F77DD;}.dot-Heat{background:#D85A30;}
+.dot-Manufacturing{background:#1D9E75;}.dot-Comms{background:#7BC67E;}.dot-MachineDesign{background:#378ADD;}.dot-MaterialsHandling{background:#D85A30;}
 .subj-name{font-size:12.5px;font-weight:600;color:var(--text);width:80px;flex-shrink:0;}
 .pills{display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center;}
 .pill{font-size:12px;padding:3px 11px;border-radius:20px;cursor:pointer;transition:opacity .15s;user-select:none;display:flex;align-items:center;gap:4px;font-family:inherit;}
@@ -167,18 +167,19 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
 <div class="gantt-tooltip" id="gTooltip"></div>
 <div class="container">
 <div class="loading-overlay" id="loader">Loading your tracker...</div>
-<h1>Uni semester tracker</h1>
-<p class="subtitle">2026 &mdash; CAD &middot; Vibrations &middot; Materials &middot; Heat</p>
+<h1>Uni semester tracker &mdash; Sem 2</h1>
+<p class="subtitle">2026 Sem 2 &mdash; Manufacturing &middot; Comms &middot; Machine Design &middot; Materials Handling</p>
 <div class="top-bar">
   <button class="fbtn active" onclick="filt('all',this)">All</button>
   <button class="fbtn red" onclick="filt('behind',this)">Behind</button>
   <button class="fbtn" onclick="filt('upcoming',this)">Upcoming</button>
-  <button class="fbtn" onclick="filt('CAD',this)">CAD</button>
-  <button class="fbtn" onclick="filt('Vibrations',this)">Vibrations</button>
-  <button class="fbtn" onclick="filt('Materials',this)">Materials</button>
-  <button class="fbtn" onclick="filt('Heat',this)">Heat</button>
+  <button class="fbtn" onclick="filt('Manufacturing',this)">Manufacturing</button>
+  <button class="fbtn" onclick="filt('Comms',this)">Comms</button>
+  <button class="fbtn" onclick="filt('Machine Design',this)">Machine Design</button>
+  <button class="fbtn" onclick="filt('Materials Handling',this)">Materials Handling</button>
   <div class="spacer"></div>
   <span class="save-ind" id="saveInd">Saved</span>
+  <button class="edit-btn" id="collapseToggle" onclick="toggleCollapseAll()">Collapse all</button>
   <button class="edit-btn" id="editToggle" onclick="toggleEdit()">Edit mode</button>
   <div class="prog-wrap">
     <div class="prog-track"><div class="prog-fill" id="prog" style="width:0%"></div></div>
@@ -218,16 +219,21 @@ h1{font-size:22px;font-weight:600;margin-bottom:3px;}
 <script>
 var DB_URL='https://uni-tracker-f035f-default-rtdb.asia-southeast1.firebasedatabase.app/5f3bbc683d2bfb14/tasks.json';
 var DB_DL_URL='https://uni-tracker-f035f-default-rtdb.asia-southeast1.firebasedatabase.app/5f3bbc683d2bfb14/deadlines.json';
-var subjects=['CAD','Vibrations','Materials','Heat'];
+var subjects=['Manufacturing','Comms','Machine Design','Materials Handling'];
 var pillCls={lec:'p-lec',tut:'p-tut',lab:'p-lab',wksh:'p-wksh',asgn:'p-asgn',exam:'p-exam'};
 var editMode=false,pillMap={},cardPills={},idCounter=0,saveTimer=null,saveDebounce=null,dlSaveDebounce=null;
 var deletedKeys=new Set();
 var chevSvg='<svg viewBox="0 0 11 11"><polyline points="2,3 5.5,7.5 9,3"/></svg>';
-var SEMESTER_START=new Date(2026,1,16,0,0,0,0);
-var BREAK_START=new Date(2026,3,6,0,0,0,0);
-var BREAK_END=new Date(2026,3,20,0,0,0,0);
-var GS=new Date(2026,1,16,0,0,0,0);
-var GE=new Date(2026,6,15,0,0,0,0);
+function dotCssClass(subj){return 'dot-'+subj.replace(/\s+/g,'');}
+var SEMESTER_START=new Date(2026,6,20,0,0,0,0);
+var BREAK_START=new Date(2026,7,17,0,0,0,0);   // 17 Aug
+var BREAK_END=new Date(2026,7,24,0,0,0,0);     // 24 Aug (1 week)
+var BREAK2_START=new Date(2026,8,28,0,0,0,0);  // 28 Sep
+var BREAK2_END=new Date(2026,9,5,0,0,0,0);     // 5 Oct (1 week)
+var EXAM_START=new Date(2026,10,2,0,0,0,0);
+var EXAM_END=new Date(2026,10,13,0,0,0,0);
+var GS=new Date(2026,6,20,0,0,0,0);
+var GE=new Date(2026,10,20,0,0,0,0);
 var GSPAN=GE.getTime()-GS.getTime();
 
 function pct(d){return Math.max(0,Math.min(100,((d.getTime()-GS.getTime())/GSPAN)*100));}
@@ -235,6 +241,7 @@ function fmtDate(d){var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'
 function getWeekStart(wk){
   var d=new Date(SEMESTER_START.getTime()+(wk-1)*7*24*60*60*1000);
   if(d>=BREAK_START) d=new Date(d.getTime()+(BREAK_END.getTime()-BREAK_START.getTime()));
+  if(d>=BREAK2_START) d=new Date(d.getTime()+(BREAK2_END.getTime()-BREAK2_START.getTime()));
   return d;
 }
 function getWeekLabel(wk){
@@ -244,14 +251,15 @@ function getWeekLabel(wk){
 function getCurrentWeek(){
   var now=new Date();now.setHours(0,0,0,0);
   if(now<SEMESTER_START) return 1;
-  if(now>=BREAK_START&&now<BREAK_END) return -1;
+  if((now>=BREAK_START&&now<BREAK_END)||(now>=BREAK2_START&&now<BREAK2_END)) return -1;
   var adj=new Date(now.getTime());
-  if(now>=BREAK_END) adj=new Date(now.getTime()-(BREAK_END.getTime()-BREAK_START.getTime()));
+  if(now>=BREAK_END) adj=new Date(adj.getTime()-(BREAK_END.getTime()-BREAK_START.getTime()));
+  if(now>=BREAK2_END) adj=new Date(adj.getTime()-(BREAK2_END.getTime()-BREAK2_START.getTime()));
   var days=Math.floor((adj.getTime()-SEMESTER_START.getTime())/(24*60*60*1000));
-  return Math.min(12,Math.max(1,Math.floor(days/7)+1));
+  return Math.min(13,Math.max(1,Math.floor(days/7)+1));
 }
 var currentWeek=getCurrentWeek();
-function displayWk(wk){return wk<=7?wk:wk+2;}
+function displayWk(wk){return wk;}
 function daysUntil(d){var n=new Date();n.setHours(0,0,0,0);return Math.round((d.getTime()-n.getTime())/86400000);}
 function badgeCls(days){
   if(days===null)return 'dl-tbc';
@@ -267,41 +275,64 @@ function badgeTxt(days){
   return days+'d';
 }
 
-var subjDotCls={CAD:'dot-CAD',Vibrations:'dot-Vibrations',Materials:'dot-Materials',Heat:'dot-Heat',All:''};
-var subjBarCls={CAD:'g-cad1',Vibrations:'g-vib1',Materials:'g-mat1',Heat:'g-hea1',All:'g-gen2'};
+var subjDotCls={Manufacturing:'dot-Manufacturing',Comms:'dot-Comms','Machine Design':'dot-MachineDesign','Materials Handling':'dot-MaterialsHandling',All:''};
+var subjBarCls={Manufacturing:'g-vib1',Comms:'g-cad1','Machine Design':'g-cad2','Materials Handling':'g-hea1',All:'g-gen2'};
 
 var userDeadlines=[];
 var completedOpen=false;
 var subtasksMap={};  // dlId -> [{label,done}]
 
 var BASE_DEADLINES=[
-  {id:'dl-mat-cs',subj:'Materials',label:'Industry case study',start:new Date(2026,2,1),end:new Date(2026,3,5),done:false,deleted:false},
-  {id:'dl-cad-asgn',subj:'CAD',label:'CAD Assignment',start:new Date(2026,1,16),end:new Date(2026,3,10),done:false,deleted:false},
-  {id:'dl-cad-lab',subj:'CAD',label:'Lab report',start:null,end:null,done:false,deleted:false},
-  {id:'dl-vib-lab',subj:'Vibrations',label:'Lab report',start:null,end:null,done:false,deleted:false},
-  {id:'dl-mat-lab',subj:'Materials',label:'Lab report',start:null,end:null,done:false,deleted:false},
-  {id:'dl-hea-lab',subj:'Heat',label:'Lab report',start:null,end:null,done:false,deleted:false},
-  {id:'dl-exams',subj:'All',label:'Final exams',start:new Date(2026,5,1),end:new Date(2026,5,21),done:false,deleted:false,showStart:true},
+  {id:'dl-md-test',subj:'Machine Design',label:'Class test (25%)',start:new Date(2026,8,9),end:new Date(2026,8,9),done:false,deleted:false},
+  {id:'dl-mh-indiv',subj:'Materials Handling',label:'Individual Project - Design of Silos (25%)',start:new Date(2026,6,20),end:new Date(2026,8,15),done:false,deleted:false},
+  {id:'dl-md-asgn',subj:'Machine Design',label:'Assignment (35%)',start:null,end:new Date(2026,9,4),done:false,deleted:false},
+  {id:'dl-mfg-report',subj:'Manufacturing',label:'Group Project Report (40%)',start:null,end:new Date(2026,9,16),done:false,deleted:false},
+  {id:'dl-mfg-poster',subj:'Manufacturing',label:'Group Project Poster (10%)',start:null,end:new Date(2026,9,19),done:false,deleted:false},
+  {id:'dl-mh-group',subj:'Materials Handling',label:'Group Project - Belt Conveyor (35%)',start:null,end:new Date(2026,9,21),done:false,deleted:false},
+  {id:'dl-comms-cs',subj:'Comms',label:'Case Study (30%) — date TBC',start:new Date(2026,6,20),end:new Date(2026,8,7),done:false,deleted:false},
+  {id:'dl-comms-grp',subj:'Comms',label:'Group Presentation & Report (30%) — date TBC',start:new Date(2026,8,14),end:new Date(2026,9,26),done:false,deleted:false},
+  {id:'dl-comms-port',subj:'Comms',label:'Portfolio (40%) — date TBC',start:null,end:null,done:false,deleted:false},
+  {id:'dl-mfg-exam',subj:'Manufacturing',label:'Final exam (40%)',start:new Date(2026,10,2),end:new Date(2026,10,13),done:false,deleted:false,showStart:true},
+  {id:'dl-md-exam',subj:'Machine Design',label:'Final exam (40%)',start:new Date(2026,10,2),end:new Date(2026,10,13),done:false,deleted:false,showStart:true},
+  {id:'dl-mh-exam',subj:'Materials Handling',label:'Final exam (40%)',start:new Date(2026,10,2),end:new Date(2026,10,13),done:false,deleted:false,showStart:true},
+
 ];
 
 var BASE_GANTT=[
-  {lbl:'CAD',bars:[
-    {cls:'g-cad1',s:new Date(2026,1,16),e:new Date(2026,3,10),txt:'Assignment',dlId:'dl-cad-asgn'},
+  {lbl:'Manufacturing',bars:[
+    {cls:'g-vib1',s:new Date(2026,6,20),e:new Date(2026,9,16),txt:'Group Project Report',dlId:'dl-mfg-report'},
   ]},
-  {lbl:'Vibrations',bars:[]},
-  {lbl:'Materials',bars:[
-    {cls:'g-mat1',s:new Date(2026,2,1),e:new Date(2026,3,5),txt:'Case study',dlId:'dl-mat-cs'},
+  {lbl:'Comms',bars:[
+    {cls:'g-cad1',s:new Date(2026,6,20),e:new Date(2026,8,7),txt:'Case study',dlId:'dl-comms-cs'},
+    {cls:'g-cad1',s:new Date(2026,8,14),e:new Date(2026,9,26),txt:'Group presentation',dlId:'dl-comms-grp'},
   ]},
-  {lbl:'Heat',bars:[]},
+  {lbl:'Machine Design',bars:[
+    {cls:'g-cad2',s:new Date(2026,8,9),e:new Date(2026,8,9),txt:'Class test',dlId:'dl-md-test'},
+    {cls:'g-cad1',s:new Date(2026,6,20),e:new Date(2026,9,4),txt:'Assignment',dlId:'dl-md-asgn'},
+  ]},
+  {lbl:'Mat. Handling',bars:[
+    {cls:'g-hea1',s:new Date(2026,6,20),e:new Date(2026,8,15),txt:'Indiv. Project',dlId:'dl-mh-indiv'},
+    {cls:'g-hea1',s:new Date(2026,6,20),e:new Date(2026,9,21),txt:'Group Project',dlId:'dl-mh-group'},
+  ]},
   {lbl:'General',bars:[
-    {cls:'g-gen1',s:BREAK_START,e:BREAK_END,txt:'Break'},
-    {cls:'g-gen2',s:new Date(2026,5,1),e:new Date(2026,5,21),txt:'Exams',dlId:'dl-exams'},
+    {cls:'g-gen1',s:BREAK_START,e:BREAK_END,txt:'Study Break'},
+    {cls:'g-gen1',s:BREAK2_START,e:BREAK2_END,txt:'Study Break'},
+    {cls:'g-gen2',s:EXAM_START,e:EXAM_END,txt:'Exams'},
   ]},
 ];
 
 function getAllDeadlines(){
+  var baseIds=BASE_DEADLINES.map(function(d){return d.id;});
+  var baseKeys=BASE_DEADLINES.map(function(d){return d.subj+'|'+d.label;});
+  var filteredUser=userDeadlines.filter(function(d){
+    if(d.deleted)return false;
+    // Skip if same id as a base deadline or same subj+label
+    if(baseIds.indexOf(d.id)>-1)return false;
+    if(baseKeys.indexOf(d.subj+'|'+d.label)>-1)return false;
+    return true;
+  });
   return BASE_DEADLINES.filter(function(d){return !d.deleted;})
-    .concat(userDeadlines.filter(function(d){return !d.deleted;}))
+    .concat(filteredUser)
     .sort(function(a,b){
       if(!a.end&&!b.end)return 0;
       if(!a.end)return 1;
@@ -315,6 +346,21 @@ function buildDeadlines(){
   var all=getAllDeadlines();
   var active=all.filter(function(d){return !d.done;});
   var done=all.filter(function(d){return d.done;});
+  var subjOrder=['Manufacturing','Comms','Machine Design','Materials Handling'];
+  var subjColors={Manufacturing:'#1D9E75',Comms:'#7BC67E','Machine Design':'#378ADD','Materials Handling':'#D85A30',All:'var(--amber)'};
+  var grouped={};
+  active.forEach(function(dl){
+    var s=dl.subj;if(!grouped[s])grouped[s]=[];grouped[s].push(dl);
+  });
+  subjOrder.forEach(function(subj){
+    if(!grouped[subj]||grouped[subj].length===0)return;
+    var grpHdr=document.createElement('div');
+    grpHdr.style.cssText='display:flex;align-items:center;gap:7px;padding:10px 0 5px;border-bottom:0.5px solid var(--border);';
+    grpHdr.innerHTML='<div style="width:7px;height:7px;border-radius:50%;background:'+subjColors[subj]+';flex-shrink:0"></div>'
+      +'<span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;">'+(subj==='All'?'General':subj)+'</span>';
+    list.appendChild(grpHdr);
+    grouped[subj].forEach(function(dl){list.appendChild(makeRow(dl));});
+  });
   function makeRow(dl){
     var refDate=dl.showStart?dl.start:dl.end;
     var days=refDate?daysUntil(refDate):null;
@@ -560,11 +606,17 @@ function saveDlState(){
   },600);
 }
 
+var VALID_SUBJS=['Manufacturing','Comms','Machine Design','Materials Handling','All'];
 function loadDlState(state){
   if(!state)return;
+  // Only apply baseDone/Deleted for IDs that exist in current BASE_DEADLINES
+  var validIds=BASE_DEADLINES.map(function(d){return d.id;});
   if(state.baseDone) BASE_DEADLINES.forEach(function(d){if(state.baseDone[d.id]!==undefined)d.done=state.baseDone[d.id];});
   if(state.baseDeleted) BASE_DEADLINES.forEach(function(d){if(state.baseDeleted[d.id])d.deleted=true;});
-  if(state.user) userDeadlines=state.user.map(function(d){
+  // Only load user deadlines with valid current-sem subjects
+  if(state.user) userDeadlines=state.user.filter(function(d){
+    return VALID_SUBJS.indexOf(d.subj)>-1;
+  }).map(function(d){
     return {id:d.id,subj:d.subj,label:d.label,
       start:d.start?new Date(d.start):null,
       end:d.end?new Date(d.end):null,done:d.done,deleted:d.deleted||false};
@@ -572,9 +624,9 @@ function loadDlState(state){
 }
 
 var months=[
-  {lbl:'Feb',d:new Date(2026,1,1)},{lbl:'Mar',d:new Date(2026,2,1)},
-  {lbl:'Apr',d:new Date(2026,3,1)},{lbl:'May',d:new Date(2026,4,1)},
-  {lbl:'Jun',d:new Date(2026,5,1)},{lbl:'Jul',d:new Date(2026,6,1)},
+  {lbl:'Jul',d:new Date(2026,6,1)},{lbl:'Aug',d:new Date(2026,7,1)},
+  {lbl:'Sep',d:new Date(2026,8,1)},{lbl:'Oct',d:new Date(2026,9,1)},
+  {lbl:'Nov',d:new Date(2026,10,1)},
 ];
 
 var _gTip=null;
@@ -726,10 +778,24 @@ function dbSave(){
 
 function getTasks(wk,subj){
   var t=[];
-  t.push({type:'lec',label:'Lecture',due:''});
-  if(subj!=='CAD')t.push({type:'tut',label:'Tutorial',due:''});
-  if(subj==='CAD')t.push({type:'lab',label:'Lab',due:''});
-  if(subj==='Heat')t.push({type:'wksh',label:'Workshop',due:''});
+  if(subj==='Manufacturing'){
+    t.push({type:'lec',label:'Lecture',due:''});
+    if(wk>=2) t.push({type:'lab',label:'Lab',due:''});
+    if(wk===7||wk===12) t.push({type:'tut',label:'Tutorial',due:''});
+  }
+  if(subj==='Comms'){
+    t.push({type:'wksh',label:'Seminar',due:''});
+    t.push({type:'tut',label:'Tutorial',due:''});
+  }
+  if(subj==='Machine Design'){
+    t.push({type:'lec',label:'Lecture',due:''});
+    // Tutorial fortnightly from wk1: wk1,3,5,7,9,11,13
+    if(wk%2===1) t.push({type:'tut',label:'Tutorial',due:''});
+  }
+  if(subj==='Materials Handling'){
+    t.push({type:'lec',label:'Lecture',due:''});
+    if(wk>=2) t.push({type:'tut',label:'Tutorial',due:''});
+  }
   return t;
 }
 
@@ -767,7 +833,7 @@ function buildCard(wk){
   subjects.forEach(function(subj){
     var key=wk+'-'+subj;
     var row=document.createElement('div');row.className='subj-row';row.setAttribute('data-subj',subj);
-    row.innerHTML='<div class="subj-dot dot-'+subj+'"></div><span class="subj-name">'+subj+'</span>';
+    row.innerHTML='<div class="subj-dot '+dotCssClass(subj)+'" style="flex-shrink:0"></div><span class="subj-name">'+subj+'</span>';
     var pillsDiv=document.createElement('div');pillsDiv.className='pills';pillsDiv.id='pills-'+key;
     getTasks(wk,subj).forEach(function(task){
       var sk=key+'-'+task.type+'-'+task.label.replace(/\s/g,'_');
@@ -788,13 +854,13 @@ function buildCard(wk){
 function buildExamCard(){
   var cardId='card-exam';cardPills[cardId]=[];
   var card=document.createElement('div');
-  card.className='week-card exam-card';card.id=cardId;card.setAttribute('data-status','exam');
+  card.className='week-card exam-card collapsed';card.id=cardId;card.setAttribute('data-status','exam');
   var head=document.createElement('div');head.className='card-head';
   var weekCb=document.createElement('div');weekCb.className='week-cb';weekCb.id='wcb-'+cardId;
   weekCb.addEventListener('click',function(e){e.stopPropagation();tickWeek(cardId);});
   var headInner=document.createElement('span');
   headInner.style.cssText='display:flex;align-items:center;gap:9px;flex:1;';
-  headInner.innerHTML='<span class="wk-num">Exam period</span><span class="wk-dates">from 1 Jun</span><span class="card-prog" id="cprog-'+cardId+'"></span>';
+  headInner.innerHTML='<span class="wk-num">Exam period</span><span class="wk-dates">2 Nov – 13 Nov</span><span class="card-prog" id="cprog-'+cardId+'"></span>';
   headInner.addEventListener('click',function(){card.classList.toggle('collapsed');});
   var chev=document.createElement('div');chev.className='chevron';chev.innerHTML=chevSvg;
   chev.addEventListener('click',function(){card.classList.toggle('collapsed');});
@@ -802,9 +868,13 @@ function buildExamCard(){
   var body=document.createElement('div');body.className='card-body';
   subjects.forEach(function(subj){
     var row=document.createElement('div');row.className='subj-row';row.setAttribute('data-subj',subj);
-    row.innerHTML='<div class="subj-dot dot-'+subj+'"></div><span class="subj-name">'+subj+'</span>';
+    row.innerHTML='<div class="subj-dot '+dotCssClass(subj)+'" style="flex-shrink:0"></div><span class="subj-name">'+subj+'</span>';
     var pillsDiv=document.createElement('div');pillsDiv.className='pills';pillsDiv.id='pills-exam-'+subj;
-    pillsDiv.appendChild(makePillEl({type:'exam',label:'Final exam',due:'from 1 Jun'},cardId,'exam-'+subj+'-final'));
+    var examDlId={Manufacturing:'dl-mfg-exam','Comms':null,'Machine Design':'dl-md-exam','Materials Handling':'dl-mh-exam'}[subj];
+    var examDays=null;
+    if(examDlId){var eDl=BASE_DEADLINES.find(function(d){return d.id===examDlId;});if(eDl&&eDl.start)examDays=daysUntil(eDl.start);}
+    var examDue=examDays!==null?(examDays+'d left'):'TBC';
+    pillsDiv.appendChild(makePillEl({type:'exam',label:'Final exam',due:examDue},cardId,'exam-'+subj+'-final'));
     row.appendChild(pillsDiv);body.appendChild(row);
     var addRow=document.createElement('div');addRow.className='add-row';
     addRow.innerHTML='<span class="add-lbl">'+subj+':</span>'
@@ -818,13 +888,19 @@ function buildExamCard(){
 }
 
 var container=document.getElementById('cards');
-for(var wk=1;wk<=12;wk++){
+for(var wk=1;wk<=13;wk++){
   container.appendChild(buildCard(wk));
-  if(wk===7){
+  if(wk===4){
     var br=document.createElement('div');
     br.className='break-divider';br.id='break-divider';
-    br.textContent='Mid-semester break: 6 Apr \u2013 19 Apr';
+    br.textContent='Study break: 17 Aug – 23 Aug';
     container.appendChild(br);
+  }
+  if(wk===10){
+    var br2=document.createElement('div');
+    br2.className='break-divider';br2.id='break-divider2';
+    br2.textContent='Study break: 28 Sep – 4 Oct';
+    container.appendChild(br2);
   }
 }
 container.appendChild(buildExamCard());
@@ -869,7 +945,8 @@ function updateCardProg(cardId){
   if(!card)return;
   var wk=parseInt(card.getAttribute('data-wk'));
   var allDone=total>0&&done===total;
-  card.classList.toggle('collapsed',allDone);
+  var isUpcoming=card.getAttribute('data-status')==='upcoming';
+  card.classList.toggle('collapsed',allDone||isUpcoming);
   card.classList.toggle('all-done',allDone);
   if(!isNaN(wk)){
     var isBehind=wk<currentWeek&&!allDone;
@@ -934,6 +1011,24 @@ function addTask(key,cardId,pillsDivId){
   labelEl.value='';if(dueEl)dueEl.value='';
   updateCardProg(cardId);updateProgDisplay();dbSave();
 }
+var allCollapsed=false;
+function toggleCollapseAll(){
+  allCollapsed=!allCollapsed;
+  document.getElementById('collapseToggle').textContent=allCollapsed?'Expand all':'Collapse all';
+  document.querySelectorAll('.week-card').forEach(function(card){
+    var status=card.getAttribute('data-status');
+    if(allCollapsed){
+      card.classList.add('collapsed');
+    } else {
+      // restore defaults: open if current or behind, collapsed if upcoming/done
+      var pids=cardPills[card.id]||[];
+      var done=pids.filter(function(p){return pillMap[p]&&pillMap[p].done;}).length;
+      var allDone=pids.length>0&&done===pids.length;
+      var isUpcoming=status==='upcoming'||status==='exam';
+      card.classList.toggle('collapsed',allDone||isUpcoming);
+    }
+  });
+}
 function toggleEdit(){
   editMode=!editMode;
   document.getElementById('editToggle').classList.toggle('on',editMode);
@@ -958,11 +1053,16 @@ function filt(val,btn){
       var match=r.getAttribute('data-subj')===val;
       r.style.display=match?'':'none';if(match)hasSubj=true;
     });
-    card.querySelectorAll('.add-row').forEach(function(r){r.style.display=r.innerHTML.indexOf(val)>-1?'':'none';});
+    card.querySelectorAll('.add-row').forEach(function(r){
+      var show=r.innerHTML.indexOf(val)>-1;
+      r.style.display=show?'':'none';
+    });
     card.classList.toggle('hidden',!hasSubj);
   });
   var bd=document.getElementById('break-divider');
   if(bd)bd.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
+  var bd2=document.getElementById('break-divider2');
+  if(bd2)bd2.style.display=(val==='all'||val==='behind'||val==='upcoming')?'':'none';
 }
 
 function registerSW(){

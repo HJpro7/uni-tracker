@@ -561,18 +561,33 @@ function saveDlState(){
   dlDebounce=setTimeout(function(){
     var state={
       user:userDeadlines.map(function(dl){return {id:dl.id,subj:dl.subj,label:dl.label,start:dl.start?dl.start.toISOString():null,end:dl.end?dl.end.toISOString():null,done:dl.done,deleted:!!dl.deleted};}),
-      baseDone:{},baseDeleted:{}
+      base:BASE_DEADLINES.map(function(d){return {id:d.id,label:d.label,start:d.start?d.start.toISOString():null,end:d.end?d.end.toISOString():null,done:d.done,deleted:!!d.deleted};})
     };
-    BASE_DEADLINES.forEach(function(d){state.baseDone[d.id]=d.done;state.baseDeleted[d.id]=!!d.deleted;});
     try{localStorage.setItem('uni_dl_v1',JSON.stringify(state));}catch(e){}
-    fetch(DB_DL_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(state)}).catch(function(){});
+    fetch(DB_DL_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(state)})
+    .then(function(r){showInd(r.ok?'Saved ✓':'Save failed',!r.ok);})
+    .catch(function(){showInd('Offline — saved locally',true);});
   },600);
 }
 
 function loadDlState(state){
   if(!state)return;
-  if(state.baseDone)BASE_DEADLINES.forEach(function(d){if(state.baseDone[d.id]!==undefined)d.done=state.baseDone[d.id];});
-  if(state.baseDeleted)BASE_DEADLINES.forEach(function(d){if(state.baseDeleted[d.id])d.deleted=true;});
+  // New format: full base array
+  if(state.base){
+    state.base.forEach(function(saved){
+      var dl=BASE_DEADLINES.find(function(d){return d.id===saved.id;});
+      if(!dl)return;
+      dl.done=!!saved.done;
+      dl.deleted=!!saved.deleted;
+      dl.label=saved.label||dl.label;
+      if(saved.start)dl.start=new Date(saved.start);
+      if(saved.end)dl.end=new Date(saved.end);
+    });
+  } else {
+    // Legacy format fallback
+    if(state.baseDone)BASE_DEADLINES.forEach(function(d){if(state.baseDone[d.id]!==undefined)d.done=state.baseDone[d.id];});
+    if(state.baseDeleted)BASE_DEADLINES.forEach(function(d){if(state.baseDeleted[d.id])d.deleted=true;});
+  }
   if(state.user)userDeadlines=state.user.filter(function(d){return SUBJECTS.indexOf(d.subj)>-1;}).map(function(d){
     return {id:d.id,subj:d.subj,label:d.label,start:d.start?new Date(d.start):null,end:d.end?new Date(d.end):null,done:d.done,deleted:!!d.deleted};
   });
